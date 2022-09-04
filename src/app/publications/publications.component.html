@@ -1,0 +1,33 @@
+<main class="container-fluid ">
+    <h1>Publications</h1>
+    <div class="container">
+        <div class="row p-1">
+          <ol>
+            <li *ngFor="let pub of publications">
+                {{processAuthors(pub.authors)}}
+                <b>{{pub.title}}</b>,
+                <em>{{pub.in}}</em>
+
+                <span *ngIf="pub.type == 'proceedings'">, 
+                  {{pub.location}},
+                </span>
+
+                <span *ngIf="pub.type == 'journal'">, 
+                  vol. {{pub.volume}},
+                  no. {{pub.issue}},
+                </span>
+
+                <span *ngIf="pub.pages != undefined">
+                  pp.{{pub.pages}}, 
+                </span>
+
+                {{pub.year}}.
+
+                <span *ngIf="pub.link != undefined">
+                  (<a href={{pub.link}}>{{pub.link}}</a>)
+                </span>
+            </li>
+          </ol>
+        </div>
+      </div>
+</main>
