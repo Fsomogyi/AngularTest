@@ -1,0 +1,1255 @@
+package PotencyClassicDomain {
+	import Bootstrap.*;
+	import Bootstrap.BuiltInOperations.*;
+	import Bootstrap.Validation.*;
+	import Bootstrap.Validation.Helper.*;
+	
+	PotencyEntity: ComplexEntity {
+		ComplexEntity.Children;
+		Base.BetaValidation;
+		Base.GammaValidation;
+		
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Number;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot Potency: ComplexEntity.Children;
+		
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Number;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot Level: ComplexEntity.Children;
+		
+		@Base.AlphaValidation.OpSig
+		@Base.AlphaValidation.T			
+		@Base.AlphaValidation.C				
+		slot AlphaValidation : Base.AlphaValidation = 
+			operation Bool ID::PotencyEntityAlpha(ID instance)
+			{
+				call $Log("###### POTENCY ENTITY ALPHA ######");
+				
+				ID meta = call $Meta(instance);
+				Object potency = call $GetRelevantAttributeValue(instance, $PotencyEntity.Potency);
+				Object metaPotency = call $GetRelevantAttributeValue(meta, $PotencyEntity.Potency);
+				Object level = call $GetRelevantAttributeValue(instance, $PotencyEntity.Level);
+				Object metaLevel = call $GetRelevantAttributeValue(meta, $PotencyEntity.Level);
+				
+				if (potency == null || level == null)
+					return true;
+				
+				if (potency < 0) {
+					call $Log("INVALID: potency must be >= 0 at all times");
+					return false;
+				}
+				if (level < 0) {
+					call $Log("INVALID: level must be >= 0 at all times");
+					return false;	
+				}
+				if (potency > level) {
+					call $Log("INVALID: potency must be <= level at all times");
+					return false;
+				}
+				
+				if (metaPotency == null || metaLevel == null)
+					return true;
+				
+				//Object[] attributes = call $Attributes(instance);
+				//Object[] metaAttributes = call $Attributes(meta);
+				
+				/*
+				call $Log("###### STRUCTURE OF THE ENTITY ######");
+				call $Log(call $StrConcat("instance = ", instance));
+				call $Log(call $StrConcat("meta = ", meta));
+				call $Log(call $StrConcat("potency = ", potency));
+				call $Log(call $StrConcat("meta potency = ", metaPotency));
+				call $Log(call $StrConcat("level = ", level));
+				call $Log(call $StrConcat("meta level = ", metaLevel));
+				call $Log(call $StrConcat("attributes = ", attributes));
+				call $Log(call $StrConcat("meta attributes = ", metaAttributes));
+				*/
+		
+				Bool isValidInstantiation = call $IsValidInstantiation(instance, meta);
+				if (isValidInstantiation == true)
+					call $Log("RESULT: valid instantiation");
+				else
+				{
+					call $Log("RESULT: invalid instantiation");
+					return false;
+				}
+
+				if (metaPotency == 0) {
+					call $Log("INVALID: meta potency = 0");
+					return false;
+				}
+				
+				/*
+				if (isClassification && potency != metaPotency) {
+					call $Log("INVALID: classification detected, but potency != meta potency");
+					return false;
+				}
+				
+				if (isClassification && level != metaLevel) {
+					call $Log("INVALID: classification detected, but level != meta level");
+					return false;
+				}	
+				* 
+				*/
+				
+				if (potency != (metaPotency - 1)) {
+					call $Log("INVALID: potency != meta potency - 1");
+					return false;
+				}
+				
+				if (level != (metaLevel - 1)) {
+					call $Log("INVALID: level != meta level - 1");
+					return false;
+				}
+				
+				return true;
+			}
+	}
+	
+	PotencyNode: PotencyEntity {
+		Base.BetaValidation;
+		Base.GammaValidation;
+		
+		@PotencyEntity.Potency.T
+		@PotencyEntity.Potency.C
+		slot Potency: PotencyEntity.Potency;
+		
+		@PotencyEntity.Level.T
+		@PotencyEntity.Level.C
+		slot Level: PotencyEntity.Level;
+		
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Bool;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot IsAbstract: ComplexEntity.Children;
+		
+		@P: ConstraintContainer =
+		Potency : PotencyConstraint{
+			PotencyConstraint.IsOverwritable;
+			PotencyConstraint.IsPermanent;
+			
+			@PotencyConstraint.PotencyValue.T
+			@PotencyConstraint.PotencyValue.C
+			slot PotencyValue: PotencyConstraint.PotencyValue;
+		};
+		@L: ConstraintContainer =
+		Level : LevelConstraint{
+			LevelConstraint.IsOverwritable;
+			LevelConstraint.IsPermanent;
+			
+			@LevelConstraint.LevelValue.T
+			@LevelConstraint.LevelValue.C
+			slot LevelValue: LevelConstraint.LevelValue;
+		};
+		
+		@F: ConstraintContainer =
+		Field : FieldConstraint{
+			FieldConstraint.IsOverwritable;
+			FieldConstraint.IsPermanent;
+			
+			@FieldConstraint.IsSingleField.T
+			@FieldConstraint.IsSingleField.C
+			slot IsSingleField: FieldConstraint.IsSingleField;
+		};
+		@ComplexEntity.Children.T
+		@ComplexEntity.Children.C
+		@ConstraintContainer
+		slot Children: ComplexEntity.Children;
+		
+		@Base.AlphaValidation.OpSig
+		@Base.AlphaValidation.T			
+		@Base.AlphaValidation.C				
+		slot AlphaValidation : PotencyEntity.AlphaValidation = 
+			operation Bool ID::PotencyNodeAlpha(ID instance)
+			{
+				Object potency = call $GetRelevantAttributeValue(instance, $PotencyEntity.Potency);
+				Object level = call $GetRelevantAttributeValue(instance, $PotencyEntity.Level);
+				Object isAbstract = call $GetRelevantAttributeValue(instance, $PotencyNode.IsAbstract);
+				
+				if (potency == null || level == null)
+					return true;
+					
+				if (isAbstract == true && potency != 0) {
+					call $Log(call $StrConcat("INVALID: abstract node must always have a potency of 0: ", instance));
+					return false;
+				}
+				
+				Object[] attributes = call $Attributes(instance);
+				
+				for (Object attr : attributes)
+				{
+					if (attr != $PotencyNode.Children) {
+						// Check the level of the field related to the level of the node
+						ID attribute_l = call $GetRelevantAttribute(attr, $PotencyNode.Children.L);
+						if (attribute_l != null) {
+							Object attr_value_l = call $Value(attribute_l, 0);
+							Number levelField = call $GetRelevantAttributeValue(attr_value_l, $LevelConstraint.LevelValue) as Number;
+							
+							call $Log(call $StrConcat("level of node = ", level));
+							call $Log(call $StrConcat("level of field = ", levelField));
+							
+							if (level != levelField) {
+								call $Log(call $StrConcat("INVALID: node level must be = field level: ", attr));
+								return false;
+							}
+						}
+						
+						// Check the potency of the field related to the potency of the node
+						ID attribute_p = call $GetRelevantAttribute(attr, $PotencyNode.Children.P);
+						if (attribute_p != null) {
+							Object attr_value_p = call $Value(attribute_p, 0);
+							Number potencyField = call $GetRelevantAttributeValue(attr_value_p, $PotencyConstraint.PotencyValue) as Number;
+							
+							call $Log(call $StrConcat("potency of node = ", potency));
+							call $Log(call $StrConcat("potency of field = ", potencyField));
+							
+							// An abstract node cannot have fields with potency 0
+							if (isAbstract == true) {
+								if (potencyField == 0) {
+									call $Log(call $StrConcat("INVALID: an abstract node cannot have a field with potency 0: ", attr));
+									return false;
+								}
+							}
+							// The potency of a non-abstract node must always be greater than the potency of its slots
+							else {
+								if (potencyField > potency) {
+									call $Log(call $StrConcat("INVALID: field potency cannot be greater than node potency: ", attr));
+									return false;
+								}
+							}
+						}
+					}
+					
+				}
+
+				return true;
+			}
+	}
+	
+	PotencyEdge: PotencyEntity {
+		Base.BetaValidation;
+		Base.GammaValidation;
+		
+		@PotencyEntity.Potency.T
+		@PotencyEntity.Potency.C
+		slot Potency: PotencyEntity.Potency;
+		
+		@PotencyEntity.Level.T
+		@PotencyEntity.Level.C
+		slot Level: PotencyEntity.Level;
+		
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $PotencyNode;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot Node1: ComplexEntity.Children;
+		
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $PotencyNode;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot Node2: ComplexEntity.Children;
+		
+		@Base.AlphaValidation.OpSig
+		@Base.AlphaValidation.T			
+		@Base.AlphaValidation.C				
+		slot AlphaValidation : PotencyEntity.AlphaValidation = 
+			operation Bool ID::PotencyEdgeAlpha(ID instance)
+			{
+				call $Log("###### POTENCY EDGE ALPHA ######");
+				
+				// Needed for inheritance and other special edges in the future
+				ID meta = call $Meta(instance);
+				if (meta == $PotencyEdge)
+					return true;
+				
+				Object node1 = call $GetRelevantAttributeValue(instance, $PotencyEdge.Node1);
+				Object node2 = call $GetRelevantAttributeValue(instance, $PotencyEdge.Node2);
+				
+				call $Log(call $StrConcat("node 1 = ", node1));
+				call $Log(call $StrConcat("node 2 = ", node2));
+				
+				if (node1 == null || node2 == null)
+					return true;
+					
+				// Disallow cross-level references
+				Object level1 = call $GetRelevantAttributeValue(node1, $PotencyEntity.Level);
+				Object level2 = call $GetRelevantAttributeValue(node2, $PotencyEntity.Level);
+				if (level1 != level2)
+				{
+					call $Log(call $StrConcat("INVALID: cross level reference detected between: ", call $StrConcat(node1, call $StrConcat(", ", node2))));
+					return false;
+				}
+				Object levelEdge = call $GetRelevantAttributeValue(instance, $PotencyEntity.Level);
+				if (levelEdge != level1)
+				{
+					call $Log(call $StrConcat("INVALID: level of edge != level of connected nodes: ", call $StrConcat(node1, call $StrConcat(", ", node2))));
+					return false;
+				}
+				
+				// Check meta conformity (node1 and node2 meta types)
+				if (meta == $PotencyEntity || meta == $PotencyEdge)
+					return true;
+					
+				Object metaNode1 = call $GetRelevantAttributeValue(meta, $PotencyEdge.Node1);
+				Object metaNode2 = call $GetRelevantAttributeValue(meta, $PotencyEdge.Node2);
+				
+				call $Log(call $StrConcat("metaNode1: ", metaNode1));
+				call $Log(call $StrConcat("metaNode2: ", metaNode2));
+				
+				if (metaNode1 != null && metaNode2 != null) {
+					if (call $Meta(node1) != metaNode1 || call $Meta(node2) != metaNode2)
+					{
+						call $Log(call $StrConcat("INVALID: edge does not conform to its meta: ", instance));
+						return false;
+					}
+				}
+				
+				return true;
+			}
+	}
+	
+	Inheritance: PotencyEdge {
+		@PotencyEntity.Potency.T
+		@PotencyEntity.Potency.C
+		slot Potency: PotencyEdge.Potency = 0;
+		
+		@PotencyEntity.Level.T
+		@PotencyEntity.Level.C
+		slot Level: PotencyEdge.Level;
+		
+		@PotencyEdge.Node1.T
+		@PotencyEdge.Node1.C
+		slot Descendant: PotencyEdge.Node1;
+		
+		@PotencyEdge.Node2.T
+		@PotencyEdge.Node2.C
+		slot Parent: PotencyEdge.Node2;
+		
+		@Base.AlphaValidation.OpSig
+		@Base.AlphaValidation.T			
+		@Base.AlphaValidation.C				
+		slot AlphaValidation : PotencyEdge.AlphaValidation = 
+			operation Bool ID::InheritanceAlpha(ID instance)
+			{
+				call $Log("###### INHERITANCE ALPHA ######");
+				
+				Object descendant = call $GetRelevantAttributeValue(instance, $Inheritance.Descendant);
+				Object parent = call $GetRelevantAttributeValue(instance, $Inheritance.Parent);
+				
+				if (descendant == null || parent == null)
+					return true;
+				
+				ID meta = call $Meta(instance);
+				
+				// Check if every field in the parent is cloned in the descendant
+				Object[] parentAttributes = call $Attributes(parent);
+				for (Object pa : parentAttributes)
+				{
+					if (call $DerivesFrom($PotencyNode.Children, pa)) {
+						call $Log(call $StrConcat("checking parent field: ", pa));
+						Object da = call $GetRelevantAttribute(descendant, pa);
+						
+						if (da == null) {
+							call $Log(call $StrConcat("INVALID: field is not cloned in descendant: ", pa));
+							return false;
+						}
+					}
+				}
+				
+				// Check if the parent instantiates a node other than PotencyNode, then the descendant also has to
+				ID parentMeta = call $Meta(parent);
+				ID descendantMeta = call $Meta(descendant);
+				if (parentMeta != $PotencyNode) {
+					if (descendantMeta != parentMeta) {
+						call $Log(call $StrConcat("descendant meta: ", descendantMeta));
+						call $Log(call $StrConcat("parent meta: ", parentMeta));
+						call $Log(call $StrConcat("INVALID: the descendant in an inheritance must instantiate the meta node of the parent: ", descendant));
+						return false;
+					}
+				}
+				
+				return true;
+			}
+	}
+	
+	// This operation is responsible for disallowing forbidden features in the classic potency notion during instantiation (like omission)
+	// Therefore, DMLAization is mapped to instantiation, where either 1) one or more slots are concretized, 2) slots are cloned, 3) new slot is added
+	operation Bool IsValidInstantiation(ID instance, ID meta)
+	{
+		call $Log("###### CHECKING VALID INSTANTIATION RULES... ######");
+		
+		Object[] attributes = call $Attributes(instance);
+		Object[] metaAttributes = call $Attributes(meta);
+		
+		Object isMetaAbstract = call $GetRelevantAttributeValue(meta, $PotencyNode.IsAbstract);
+		if (isMetaAbstract != null) {
+			if (isMetaAbstract == true) {
+				call $Log(call $StrConcat("INVALID: cannot instantiate from abstract node: ", meta));
+				return false;
+			}
+		}
+		
+		for (Object m : metaAttributes)
+		{
+			ID attrInInstance = call $GetRelevantAttribute(instance, m);
+			ID attribute_p = call $GetRelevantAttribute(m, $PotencyNode.Children.P);
+			
+			// Field with 0 potency in the meta must be omitted from the instance
+			if (attribute_p != null) {
+				Object attr_value_p = call $Value(attribute_p, 0);
+				Number potencySlot = call $GetRelevantAttributeValue(attr_value_p, $PotencyConstraint.PotencyValue) as Number;
+				
+				if (potencySlot == 0 && attrInInstance != null)
+				{
+					call $Log(call $StrConcat("INVALID: field with potency 0 must be omitted from instance: ", m));
+					return false;
+				}
+			}
+		}
+		
+		return true;
+	}
+	
+	
+	PotencyConstraint : Constraint {	
+		@T: ComplexEntity.Children.T =
+			Type : ComplexEntity.Children.T.T {
+				Type.IsOverwritable;
+				Type.IsPermanent;
+				
+				slot Type : ComplexEntity.Children.T.T.T = $Number;
+				slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+			};
+		@C: ComplexEntity.Children.C =
+			Card : ComplexEntity.Children.C.Card {
+				Cardinality.IsOverwritable;
+				Cardinality.IsPermanent;
+				
+				slot Min : ComplexEntity.Children.C.Card.Min = 1;
+				slot Max : ComplexEntity.Children.C.Card.Max = 1;
+			};
+		slot PotencyValue : ComplexEntity.Children;
+				
+		@Constraint.CAlphaValidator.OPSig
+		@Constraint.CAlphaValidator.T
+		@Constraint.CAlphaValidator.C
+		slot CAlpha : Constraint.CAlphaValidator = $PotencyConstraintAlpha;
+		
+		@Constraint.CBetaValidator.OPSig
+		@Constraint.CBetaValidator.T
+		@Constraint.CBetaValidator.C
+		slot CBeta : Constraint.CBetaValidator = $PotencyConstraintBeta;
+		
+		slot IsOverwritable : Constraint.LifeCycleValidators =
+			FiltCardIsOverwritable : OverwritableLFValidator {
+				slot IsOverwritable : OverwritableLFValidator.IsOverwritable = true;
+			};
+		slot IsPermanent : Constraint.LifeCycleValidators = $PermanentLFValidator;
+	}
+	
+	LevelConstraint : Constraint {	
+		@T: ComplexEntity.Children.T =
+			Type : ComplexEntity.Children.T.T {
+				Type.IsOverwritable;
+				Type.IsPermanent;
+				
+				slot Type : ComplexEntity.Children.T.T.T = $Number;
+				slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+			};
+		@C: ComplexEntity.Children.C =
+			Card : ComplexEntity.Children.C.Card {
+				Cardinality.IsOverwritable;
+				Cardinality.IsPermanent;
+				
+				slot Min : ComplexEntity.Children.C.Card.Min = 1;
+				slot Max : ComplexEntity.Children.C.Card.Max = 1;
+			};
+		slot LevelValue : ComplexEntity.Children;
+		
+		@Constraint.CAlphaValidator.OPSig
+		@Constraint.CAlphaValidator.T
+		@Constraint.CAlphaValidator.C
+		slot CAlpha : Constraint.CAlphaValidator = $LevelConstraintAlpha;
+		
+		@Constraint.CBetaValidator.OPSig
+		@Constraint.CBetaValidator.T
+		@Constraint.CBetaValidator.C
+		slot CBeta : Constraint.CBetaValidator = $LevelConstraintBeta;
+		
+		slot IsOverwritable : Constraint.LifeCycleValidators =
+			FiltCardIsOverwritable : OverwritableLFValidator {
+				slot IsOverwritable : OverwritableLFValidator.IsOverwritable = true;
+			};
+		slot IsPermanent : Constraint.LifeCycleValidators = $PermanentLFValidator;
+	}
+	
+	FieldConstraint : Constraint {	
+		@T: ComplexEntity.Children.T =
+			Type : ComplexEntity.Children.T.T {
+				Type.IsOverwritable;
+				Type.IsPermanent;
+				
+				slot Type : ComplexEntity.Children.T.T.T = $Bool;
+				slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+			};
+		@C: ComplexEntity.Children.C =
+			Card : ComplexEntity.Children.C.Card {
+				Cardinality.IsOverwritable;
+				Cardinality.IsPermanent;
+				
+				slot Min : ComplexEntity.Children.C.Card.Min = 1;
+				slot Max : ComplexEntity.Children.C.Card.Max = 1;
+			};
+		slot IsSingleField : ComplexEntity.Children;
+		
+		@Constraint.CAlphaValidator.OPSig
+		@Constraint.CAlphaValidator.T
+		@Constraint.CAlphaValidator.C
+		slot CAlpha : Constraint.CAlphaValidator = $FieldConstraintAlpha;
+		
+		@Constraint.CBetaValidator.OPSig
+		@Constraint.CBetaValidator.T
+		@Constraint.CBetaValidator.C
+		slot CBeta : Constraint.CBetaValidator = $FieldConstraintBeta;
+		
+		slot IsOverwritable : Constraint.LifeCycleValidators =
+			FiltCardIsOverwritable : OverwritableLFValidator {
+				slot IsOverwritable : OverwritableLFValidator.IsOverwritable = true;
+			};
+		slot IsPermanent : Constraint.LifeCycleValidators = $PermanentLFValidator;
+	}
+
+	
+	operation Bool ID::PotencyConstraintAlpha(ID meta, ID instance) {
+		call $Log("###### POTENCY CONSTRAINT ALPHA ######");
+                
+		ID meta_attribute = call $GetRelevantAttribute(meta, $PotencyNode.Children.P);
+		Object meta_value = call $Value(meta_attribute, 0);
+		Number metaPotency = call $GetRelevantAttributeValue(meta_value, $PotencyConstraint.PotencyValue) as Number;
+						
+		ID instance_attribute = call $GetRelevantAttribute(instance, $PotencyNode.Children.P);
+		Object instance_value = call $Value(instance_attribute, 0);
+		Number potency = call $GetRelevantAttributeValue(instance_value, $PotencyConstraint.PotencyValue) as Number;
+		
+		ID instance_attribute_l = call $GetRelevantAttribute(instance, $PotencyNode.Children.L);
+		Object instance_value_l = call $Value(instance_attribute_l, 0);
+		Number level = call $GetRelevantAttributeValue(instance_value_l, $LevelConstraint.LevelValue) as Number;
+		
+		/*
+		call $Log(call $StrConcat("slot: ", instance));
+		call $Log(call $StrConcat("slot potency: ", potency));
+		call $Log(call $StrConcat("metaslot potency: ", metaPotency));
+		call $Log(call $StrConcat("slot level: ", level));
+		*/
+		
+		if (metaPotency == null)
+			return true;
+		
+		Object[] values = call $Values(instance);
+
+		if(potency == 0 && (values==null || size(values)==0)) {
+			call $Log("INVALID: field potency is 0, but field has no value");
+			return false;
+		}
+				
+		
+		if (potency < 0) {
+			call $Log("INVALID: field potency must be >= 0 at all times");
+			return false;
+		}
+		
+		if (potency != metaPotency -1) {
+			call $Log("INVALID: field potency != metaPotency - 1");
+			return false;
+		}
+		
+		if (potency > level) {
+			call $Log("INVALID: field potency must be <= field level at all times");
+			return false;
+		}
+		
+		return true;
+	}
+	
+	operation Bool ID::LevelConstraintAlpha(ID meta, ID instance) {
+		call $Log("###### LEVEL CONSTRAINT ALPHA ######");
+                
+		ID meta_attribute = call $GetRelevantAttribute(meta, $PotencyNode.Children.L);
+		Object meta_value = call $Value(meta_attribute, 0);
+		Number metaLevel = call $GetRelevantAttributeValue(meta_value, $LevelConstraint.LevelValue) as Number;
+						
+		ID instance_attribute = call $GetRelevantAttribute(instance, $PotencyNode.Children.L);
+		Object instance_value = call $Value(instance_attribute, 0);
+		Number level = call $GetRelevantAttributeValue(instance_value, $LevelConstraint.LevelValue) as Number;
+
+		/*
+		call $Log(call $StrConcat("slot: ", instance));
+		call $Log(call $StrConcat("slot level: ", level));
+		call $Log(call $StrConcat("metaslot level: ", metaLevel));
+		*/
+		
+		if (metaLevel == null)
+			return true;
+		
+		if (level < 0) {
+			call $Log("INVALID: field level must be >= 0 at all times");
+			return false;	
+		}
+		
+		if (level != metaLevel -1) {
+			call $Log("INVALID: field level != metaLevel - 1");
+			return false;
+		}
+		
+		return true;
+	}
+	
+	operation Bool ID::FieldConstraintAlpha(ID meta, ID instance) {
+		call $Log("###### FIELD CONSTRAINT ALPHA ######");
+                
+		ID meta_attribute = call $GetRelevantAttribute(meta, $PotencyNode.Children.P);
+		Object meta_value = call $Value(meta_attribute, 0);
+		Number metaPotency = call $GetRelevantAttributeValue(meta_value, $PotencyConstraint.PotencyValue) as Number;
+						
+		ID instance_attribute = call $GetRelevantAttribute(instance, $PotencyNode.Children.P);
+		Object instance_value = call $Value(instance_attribute, 0);
+		Number potency = call $GetRelevantAttributeValue(instance_value, $PotencyConstraint.PotencyValue) as Number;
+		
+		ID meta_attribute_field = call $GetRelevantAttribute(meta, $PotencyNode.Children.F);
+		Object meta_value_field = call $Value(meta_attribute_field, 0);
+		Object isSingleFieldMeta = call $GetRelevantAttributeValue(meta_value_field, $FieldConstraint.IsSingleField);		
+		
+		ID instance_attribute_field = call $GetRelevantAttribute(instance, $PotencyNode.Children.F);
+		Object instance_value_field = call $Value(instance_attribute_field, 0);
+		Bool isSingleField = call $GetRelevantAttributeValue(instance_value_field, $FieldConstraint.IsSingleField) as Bool;		
+		
+		if (isSingleFieldMeta != null) {
+			if (isSingleFieldMeta != isSingleField) {
+				call $Log("INVALID: the single / dual nature of a field cannot change during instantiation");
+				return false;
+			}
+		}
+		
+		if (metaPotency == null)
+			return true;
+		
+		Object[] values = call $Values(instance);
+		
+		if(isSingleField) {
+			if(potency != 0 && (values!=null)) {
+			call $Log("INVALID: The field is a single field. Single fields only get a value at potency 0.");
+			return false;
+			}
+		}
+	    
+	    if (potency == metaPotency -1) {
+	    	if(!isSingleField) {
+			if(values==null || size(values)==0) {
+			call $Log("INVALID: The field is a dual field. Dual fields get a new value every time the potency decreases.");
+			return false;
+				}
+			}
+		}
+	
+		
+		return true;
+	}
+
+	
+	operation Bool ID::PotencyConstraintBeta(ID meta, ID[] children) {
+			return true;	// similarly to type constraint
+	}
+	
+	operation Bool ID::LevelConstraintBeta(ID meta, ID[] children) {
+			return true;	// similarly to type constraint
+	}
+	
+	operation Bool ID::FieldConstraintBeta(ID meta, ID[] children) {
+			return true;	// similarly to type constraint
+	}
+	
+	TestAssociation01: PotencyEdge {
+		@PotencyEntity.Potency.T
+		@PotencyEntity.Potency.C
+		slot Potency: PotencyEdge.Potency = 3;
+		
+		@PotencyEntity.Level.T
+		@PotencyEntity.Level.C
+		slot Level: PotencyEdge.Level = 3;
+		
+		@PotencyEdge.Node1.T
+		@PotencyEdge.Node1.C
+		slot Node1: PotencyEdge.Node1 = $A;
+		
+		@PotencyEdge.Node2.T
+		@PotencyEdge.Node2.C
+		slot Node2: PotencyEdge.Node2 = $TotallyNotA;
+	}
+	
+	/*
+	TestAssociation02: TestAssociation01 {
+		@PotencyEntity.Potency.T
+		@PotencyEntity.Potency.C
+		slot Potency: TestAssociation01.Potency = 2;
+		
+		@PotencyEntity.Level.T
+		@PotencyEntity.Level.C
+		slot Level: TestAssociation01.Level = 2;
+		
+		@PotencyEdge.Node1.T
+		@PotencyEdge.Node1.C
+		slot Node1: TestAssociation01.Node1 = $B;
+		
+		@PotencyEdge.Node2.T
+		@PotencyEdge.Node2.C
+		slot Node2: TestAssociation01.Node2 = $TotallyNotB;
+	}
+	*/
+	
+	InheritanceBA: Inheritance {
+		Inheritance.Potency;
+		
+		@PotencyEntity.Level.T
+		@PotencyEntity.Level.C
+		slot Level: Inheritance.Level = 0;
+		
+		@PotencyEdge.Node1.T
+		@PotencyEdge.Node1.C
+		slot Descendant: Inheritance.Descendant = $InhB;
+		
+		@PotencyEdge.Node2.T
+		@PotencyEdge.Node2.C
+		slot Parent: Inheritance.Parent = $InhA;
+	}
+	
+	InheritanceDB: Inheritance {
+		Inheritance.Potency;
+		
+		@PotencyEntity.Level.T
+		@PotencyEntity.Level.C
+		slot Level: Inheritance.Level = 0;
+		
+		@PotencyEdge.Node1.T
+		@PotencyEdge.Node1.C
+		slot Descendant: Inheritance.Descendant = $InhD;
+		
+		@PotencyEdge.Node2.T
+		@PotencyEdge.Node2.C
+		slot Parent: Inheritance.Parent = $InhB;
+	}
+
+	InhC : PotencyNode {
+		PotencyNode.Children;
+		
+		@PotencyEntity.Potency.T
+		@PotencyEntity.Potency.C
+		slot Potency: PotencyNode.Potency = 1;
+		
+		@PotencyEntity.Level.T
+		@PotencyEntity.Level.C
+		slot Level: PotencyNode.Level = 1;
+		
+		@PotencyNode.IsAbstract.T
+		@PotencyNode.IsAbstract.C
+		slot IsAbstract: PotencyNode.IsAbstract = false;
+		
+		@P: PotencyNode.Children.P =
+		Potency : PotencyNode.Children.P.Potency
+		{
+			PotencyConstraint.IsOverwritable;
+			PotencyConstraint.IsPermanent;
+			
+			@PotencyConstraint.PotencyValue.T
+			@PotencyConstraint.PotencyValue.C
+			slot PotencyValue: PotencyNode.Children.P.Potency.PotencyValue = 1;
+		};
+		@L: PotencyNode.Children.L =
+		Level : PotencyNode.Children.L.Level
+		{
+			LevelConstraint.IsOverwritable;
+			LevelConstraint.IsPermanent;
+			
+			@LevelConstraint.LevelValue.T
+			@LevelConstraint.LevelValue.C
+			slot LevelValue: PotencyNode.Children.L.Level.LevelValue = 1;
+		};
+		@F: PotencyNode.Children.F =
+		Field : PotencyNode.Children.F.Field
+		{
+			FieldConstraint.IsOverwritable;
+			FieldConstraint.IsPermanent;
+			
+			@FieldConstraint.IsSingleField.T
+			@FieldConstraint.IsSingleField.C
+			slot IsSingleField: PotencyNode.Children.F.Field.IsSingleField = true;
+		};
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			@Type.Type.C
+			@ComplexEntity.Children.T
+			slot Type : ComplexEntity.Children.T.T.T = $Number;
+			
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;
+
+			slot Min : ComplexEntity.Children.C.Card.Min = 0;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot InhCNumber: PotencyNode.Children;
+	}
+	
+	InhA : InhC {
+		@PotencyEntity.Potency.T
+		@PotencyEntity.Potency.C
+		slot Potency: InhC.Potency = 0;
+		
+		@PotencyEntity.Level.T
+		@PotencyEntity.Level.C
+		slot Level: InhC.Level = 0;
+		
+		@PotencyNode.IsAbstract.T
+		@PotencyNode.IsAbstract.C
+		slot IsAbstract: InhC.IsAbstract = false;
+		
+		@P: InhC.InhCNumber.P =
+		Potency : InhC.InhCNumber.P.Potency
+		{
+			PotencyConstraint.IsOverwritable;
+			PotencyConstraint.IsPermanent;
+			
+			@PotencyConstraint.PotencyValue.T
+			@PotencyConstraint.PotencyValue.C
+			slot PotencyValue: InhC.InhCNumber.P.Potency.PotencyValue = 0;
+		};
+		@L: InhC.InhCNumber.L =
+		Level : InhC.InhCNumber.L.Level
+		{
+			LevelConstraint.IsOverwritable;
+			LevelConstraint.IsPermanent;
+			
+			@LevelConstraint.LevelValue.T
+			@LevelConstraint.LevelValue.C
+			slot LevelValue: InhC.InhCNumber.L.Level.LevelValue = 0;
+		};
+		@F: InhC.InhCNumber.F =
+		Field : InhC.InhCNumber.F.Field
+		{
+			FieldConstraint.IsOverwritable;
+			FieldConstraint.IsPermanent;
+			
+			@FieldConstraint.IsSingleField.T
+			@FieldConstraint.IsSingleField.C
+			slot IsSingleField: InhC.InhCNumber.F.Field.IsSingleField = true;
+		};
+		@InhC.InhCNumber.T
+		@InhC.InhCNumber.C
+		slot InhCNumber: InhC.InhCNumber = 999;
+		
+		@P: PotencyNode.Children.P =
+		Potency : PotencyNode.Children.P.Potency
+		{
+			PotencyConstraint.IsOverwritable;
+			PotencyConstraint.IsPermanent;
+			
+			@PotencyConstraint.PotencyValue.T
+			@PotencyConstraint.PotencyValue.C
+			slot PotencyValue: PotencyNode.Children.P.Potency.PotencyValue = 0;
+		};
+		@L: PotencyNode.Children.L =
+		Level : PotencyNode.Children.L.Level
+		{
+			LevelConstraint.IsOverwritable;
+			LevelConstraint.IsPermanent;
+			
+			@LevelConstraint.LevelValue.T
+			@LevelConstraint.LevelValue.C
+			slot LevelValue: PotencyNode.Children.L.Level.LevelValue = 0;
+		};
+		@F: PotencyNode.Children.F =
+		Field : PotencyNode.Children.F.Field
+		{
+			FieldConstraint.IsOverwritable;
+			FieldConstraint.IsPermanent;
+			
+			@FieldConstraint.IsSingleField.T
+			@FieldConstraint.IsSingleField.C
+			slot IsSingleField: PotencyNode.Children.F.Field.IsSingleField = true;
+		};
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			@Type.Type.C
+			@ComplexEntity.Children.T
+			slot Type : ComplexEntity.Children.T.T.T = $Number;
+			
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;
+
+			slot Min : ComplexEntity.Children.C.Card.Min = 0;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot InhANumber: PotencyNode.Children = 1000;
+	}
+	
+	InhB : InhC {
+		@PotencyEntity.Potency.T
+		@PotencyEntity.Potency.C
+		slot Potency: InhC.Potency = 0;
+		
+		@PotencyEntity.Level.T
+		@PotencyEntity.Level.C
+		slot Level: InhC.Level = 0;
+		
+		@PotencyNode.IsAbstract.T
+		@PotencyNode.IsAbstract.C
+		slot IsAbstract: InhC.IsAbstract = false;
+		
+		InhA.InhCNumber;
+		InhA.InhANumber;
+		
+	}
+	
+	InhD : InhC {
+		@PotencyEntity.Potency.T
+		@PotencyEntity.Potency.C
+		slot Potency: InhC.Potency = 0;
+		
+		@PotencyEntity.Level.T
+		@PotencyEntity.Level.C
+		slot Level: InhC.Level = 0;
+		
+		@PotencyNode.IsAbstract.T
+		@PotencyNode.IsAbstract.C
+		slot IsAbstract: InhC.IsAbstract = false;
+		
+		InhA.InhCNumber;
+		InhA.InhANumber;
+	}
+	
+	
+	TotallyNotA : PotencyNode {
+		@PotencyEntity.Potency.T
+		@PotencyEntity.Potency.C
+		slot Potency: PotencyNode.Potency = 0;
+		
+		@PotencyEntity.Level.T
+		@PotencyEntity.Level.C
+		slot Level: PotencyNode.Level = 3;
+		
+		@PotencyNode.IsAbstract.T
+		@PotencyNode.IsAbstract.C
+		slot IsAbstract: PotencyNode.IsAbstract = true;
+		
+		@P: PotencyNode.Children.P =
+		Potency : PotencyNode.Children.P.Potency
+		{
+			PotencyConstraint.IsOverwritable;
+			PotencyConstraint.IsPermanent;
+			
+			@PotencyConstraint.PotencyValue.T
+			@PotencyConstraint.PotencyValue.C
+			slot PotencyValue: PotencyNode.Children.P.Potency.PotencyValue = 3;
+		};
+		@L: PotencyNode.Children.L =
+		Level : PotencyNode.Children.L.Level
+		{
+			LevelConstraint.IsOverwritable;
+			LevelConstraint.IsPermanent;
+			
+			@LevelConstraint.LevelValue.T
+			@LevelConstraint.LevelValue.C
+			slot LevelValue: PotencyNode.Children.L.Level.LevelValue = 3;
+		};
+		@F: PotencyNode.Children.F =
+		Field : PotencyNode.Children.F.Field
+		{
+			FieldConstraint.IsOverwritable;
+			FieldConstraint.IsPermanent;
+			
+			@FieldConstraint.IsSingleField.T
+			@FieldConstraint.IsSingleField.C
+			slot IsSingleField: PotencyNode.Children.F.Field.IsSingleField = true;
+		};
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			@Type.Type.C
+			@ComplexEntity.Children.T
+			slot Type : ComplexEntity.Children.T.T.T = $Number;
+			
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;
+
+			slot Min : ComplexEntity.Children.C.Card.Min = 0;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot TestNumber: PotencyNode.Children;
+	}
+	
+	/*
+	TotallyNotB : TotallyNotA {
+		@PotencyEntity.Potency.T
+		@PotencyEntity.Potency.C
+		slot Potency: TotallyNotA.Potency = 2;
+		
+		@PotencyEntity.Level.T
+		@PotencyEntity.Level.C
+		slot Level: TotallyNotA.Level = 2;
+		
+		slot IsAbstract: TotallyNotA.IsAbstract = false;
+	}
+	*/
+	
+	A : PotencyNode {
+		@PotencyEntity.Potency.T
+		@PotencyEntity.Potency.C
+		slot Potency: PotencyNode.Potency = 3;
+		
+		@PotencyEntity.Level.T
+		@PotencyEntity.Level.C
+		slot Level: PotencyNode.Level = 3;
+		
+		@PotencyNode.IsAbstract.T
+		@PotencyNode.IsAbstract.C
+		slot IsAbstract: PotencyNode.IsAbstract = false;
+		
+		@P: PotencyNode.Children.P =
+		Potency : PotencyNode.Children.P.Potency
+		{
+			PotencyConstraint.IsOverwritable;
+			PotencyConstraint.IsPermanent;
+			
+			@PotencyConstraint.PotencyValue.T
+			@PotencyConstraint.PotencyValue.C
+			slot PotencyValue: PotencyNode.Children.P.Potency.PotencyValue = 2;
+		};
+		@L: PotencyNode.Children.L =
+		Level : PotencyNode.Children.L.Level
+		{
+			LevelConstraint.IsOverwritable;
+			LevelConstraint.IsPermanent;
+			
+			@LevelConstraint.LevelValue.T
+			@LevelConstraint.LevelValue.C
+			slot LevelValue: PotencyNode.Children.L.Level.LevelValue = 3;
+		};
+		@F: PotencyNode.Children.F =
+		Field : PotencyNode.Children.F.Field
+		{
+			FieldConstraint.IsOverwritable;
+			FieldConstraint.IsPermanent;
+			
+			@FieldConstraint.IsSingleField.T
+			@FieldConstraint.IsSingleField.C
+			slot IsSingleField: PotencyNode.Children.F.Field.IsSingleField = false;
+		};
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			@Type.Type.C
+			@ComplexEntity.Children.T
+			slot Type : ComplexEntity.Children.T.T.T = $Number;
+			
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;
+
+			slot Min : ComplexEntity.Children.C.Card.Min = 0;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot TestNumber: PotencyNode.Children;
+		
+		// Inheritance test
+		TotallyNotA.TestNumber;
+	}
+	
+	B : A {
+		@PotencyEntity.Potency.T
+		@PotencyEntity.Potency.C
+		slot Potency: A.Potency = 2;
+		
+		@PotencyEntity.Level.T
+		@PotencyEntity.Level.C
+		slot Level: A.Level = 2;
+		
+		@PotencyNode.IsAbstract.T
+		@PotencyNode.IsAbstract.C
+		slot IsAbstract: A.IsAbstract = false;
+		
+		@P: A.TestNumber.P =
+		Potency : A.TestNumber.P.Potency
+		{
+			PotencyConstraint.IsOverwritable;
+			PotencyConstraint.IsPermanent;
+			
+			@PotencyConstraint.PotencyValue.T
+			@PotencyConstraint.PotencyValue.C
+			slot PotencyValue: A.TestNumber.P.Potency.PotencyValue = 1;
+		};
+		@L: A.TestNumber.L =
+		Level : A.TestNumber.L.Level
+		{
+			LevelConstraint.IsOverwritable;
+			LevelConstraint.IsPermanent;
+			
+			@LevelConstraint.LevelValue.T
+			@LevelConstraint.LevelValue.C
+			slot LevelValue: A.TestNumber.L.Level.LevelValue = 2;
+		};
+		@F: A.TestNumber.F =
+		Field : A.TestNumber.F.Field
+		{
+			FieldConstraint.IsOverwritable;
+			FieldConstraint.IsPermanent;
+			
+			@FieldConstraint.IsSingleField.T
+			@FieldConstraint.IsSingleField.C
+			slot IsSingleField: A.TestNumber.F.Field.IsSingleField = false;
+		};
+		@A.TestNumber.T
+		@A.TestNumber.C
+		slot TestNumber: A.TestNumber = 32;
+	}
+	
+	C : B {
+		@PotencyEntity.Potency.T
+		@PotencyEntity.Potency.C
+		slot Potency: B.Potency = 1;
+		
+		@PotencyEntity.Level.T
+		@PotencyEntity.Level.C
+		slot Level: B.Level = 1;
+		
+		@PotencyNode.IsAbstract.T
+		@PotencyNode.IsAbstract.C
+		slot IsAbstract: B.IsAbstract = false;
+
+		@P: B.TestNumber.P =
+		Potency : B.TestNumber.P.Potency
+		{
+			PotencyConstraint.IsOverwritable;
+			PotencyConstraint.IsPermanent;
+			
+			@PotencyConstraint.PotencyValue.T
+			@PotencyConstraint.PotencyValue.C
+			slot PotencyValue: B.TestNumber.P.Potency.PotencyValue = 0;
+		};
+		@L: B.TestNumber.L =
+		Level : B.TestNumber.L.Level
+		{
+			LevelConstraint.IsOverwritable;
+			LevelConstraint.IsPermanent;
+			
+			@LevelConstraint.LevelValue.T
+			@LevelConstraint.LevelValue.C
+			slot LevelValue: B.TestNumber.L.Level.LevelValue = 1;
+		};
+		@B.TestNumber.F
+		@A.TestNumber.T
+		@A.TestNumber.C
+		slot TestNumber: B.TestNumber = 222;
+	}
+	
+	D : C {
+		@PotencyEntity.Potency.T
+		@PotencyEntity.Potency.C
+		slot Potency: C.Potency = 0;
+		
+		@PotencyEntity.Level.T
+		@PotencyEntity.Level.C
+		slot Level: C.Level = 0;
+		
+		@PotencyNode.IsAbstract.T
+		@PotencyNode.IsAbstract.C
+		slot IsAbstract: C.IsAbstract = false;
+	}
+}

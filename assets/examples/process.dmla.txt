@@ -1,0 +1,1906 @@
+package ProcessDomain {
+	import Bootstrap.*;
+	import Bootstrap.BuiltInOperations.*;
+	import Bootstrap.Validation.*;
+	import Bootstrap.Validation.Helper.*;
+
+ 
+
+	/*
+	 *
+	 * 										Processes and tasks: domain-agnostic concepts
+	 * 										----------------------------------------------
+	 */
+	// This entity is needed in order to avoid code duplication in the case of alternative names
+	// NOTE: contracts would be a more elegant solution
+	ProcessEntity: ComplexEntity
+	{
+		ComplexEntity.Children;
+		Base.AlphaValidation;
+		Base.BetaValidation;
+		Base.GammaValidation;
+		
+		// P19) Certain entities are given a set of alternative names
+		// The mentioned entities (artifacts, actors, and all types) all instantiate this entity
+		// NOTE: we set this as optional, but could be set as mandatory too
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			slot Type : ComplexEntity.Children.T.T.T = $String;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 0;
+			slot Max : ComplexEntity.Children.C.Card.Max = -1;
+		};
+		slot AlternativeNames: ComplexEntity.Children;
+	}
+
+	ProcessType: ProcessEntity
+	{
+		ComplexEntity.Children;
+		ProcessEntity.AlternativeNames;
+		
+		// P1) A process type is defined by the composition of task types and their relations
+		// P2) Ordering constraints between task types of a process are established through gateways
+		// NOTE: the Elements slot is a linked list, thus, the ordering can be found in the elements themselves (ListItem)
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			@Type.Type.C
+			@ComplexEntity.Children.T
+			slot Type : ComplexEntity.Children.T.T.T = $ListItem;
+			
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = -1;
+		};
+		slot Elements: ComplexEntity.Children;
+		
+		@Base.AlphaValidation.OpSig	
+		@Base.AlphaValidation.T			
+		@Base.AlphaValidation.C				
+		slot AlphaValidation : Base.AlphaValidation = 
+			operation Bool ID::ProcessTypeAlpha(ID instance)
+			{
+				Object[] elements = call $GetRelevantAttributeValues(instance, $ProcessType.Elements);
+
+				call $Log(call $StrConcat("###### Process Type Alpha ###### ", instance));
+				call $Log(call $StrConcat("instance = ", instance));
+				call $Log(call $StrConcat("linked list = ", elements));
+
+				// P3) A process type has one initial task type, and one or more final task types
+				// Check if there is at least one final task type
+				Object finalCounter = 0;
+				for (Object e : elements)
+				{
+					if (call $GetRelevantAttributeValue(e, $TaskTypeWrapper.NextElements) == null)
+						finalCounter = finalCounter + 1;
+				}
+				
+				if (finalCounter == 0)
+				{
+					call $Log("error: there must be at least one final task type in a process type");
+					return false;
+				}
+				
+				// Check if there is exactly one initial task type
+				Object initialCounter = 0;
+				for (Object e : elements)
+				{
+					// Also check if a ProcessType only contains TaskTypes and Gateways
+					if (!(call $DerivesFrom($TaskTypeWrapper, e) || call $DerivesFrom($Gateway, e)))
+					{
+						call $Log(call $StrConcat("invalid list item found in task type: ", e));
+						return false;
+					}						
+					
+					if (call $DerivesFrom($TaskTypeWrapper, e))
+					{
+						Object foundPrevious = false;
+						for (Object g : elements)
+						{
+							if (call $DerivesFrom($Gateway, g))
+							{
+								Object[] nextElements = call $GetRelevantAttributeValues(g, $Gateway.NextElements);
+								call $Log(call $StrConcat("next elements: ", nextElements));
+								for (Object ne : nextElements)
+								{
+									if (ne == e)
+									{
+										call $Log(call $StrConcat(ne, e));
+										foundPrevious = true;
+									}
+								}
+							}
+						}
+						if (!foundPrevious)
+						{
+							call $Log(call $StrConcat("initial task type found: ", e));
+							initialCounter = initialCounter + 1;
+						}		
+					}
+				}
+				
+				if (initialCounter != 1)
+				{
+					call $Log("error: there must be exactly one initial task type in a process type");
+					return false;
+				}
+				
+				call $Log("###### Process Type Alpha DONE ######");
+				return true;
+			}
+	}
+	
+	Process: ComplexEntity
+	{
+		ComplexEntity.Children;
+		
+		// P11) Each process comprises one or more tasks
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			@Type.Type.C
+			@ComplexEntity.Children.T
+			slot Type : ComplexEntity.Children.T.T.T = $TaskWrapper;
+			
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = -1;
+		};
+		slot Elements: ComplexEntity.Children;
+		
+		// P10) Each process type can be enacted multiple times
+		// More than one processes may mark a ProcessType as their Schema
+		// Process is not an instance of ProcessType, similarly to Task and TaskType
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			@Type.Type.C
+			@ComplexEntity.Children.T
+			slot Type : ComplexEntity.Children.T.T.T = $ProcessType;
+			
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot ProcessTypeSchema: ComplexEntity.Children;
+		
+		@Base.AlphaValidation.OpSig
+		@Base.AlphaValidation.T
+		@Base.AlphaValidation.C
+		slot AlphaValidation : Base.AlphaValidation = 
+			operation Bool ID::ProcessAlpha(ID instance)
+			{
+				Object processType = call $GetRelevantAttributeValue(instance, $Process.ProcessTypeSchema);
+				Object[] tasks = call $GetRelevantAttributeValues(instance, $Process.Elements);
+				Object[] taskTypes = call $GetRelevantAttributeValues(processType, $ProcessType.Elements);
+				
+				// Check if every Task conforms to its TaskTypeWrapper (Task <--> TaskType)
+				// NOTE: the alpha validation of Task already does this, here, we only count the number of tasks
+				Object taskCounter = 0;
+				for (Object t : tasks)
+				{
+					taskCounter = taskCounter + 1;
+				}
+				
+				// Check if every TaskTypeWrapper has a conforming Task
+				Object taskTypeCounter = 0;
+				for (Object tt : taskTypes)
+				{
+					if (call $DerivesFrom($TaskTypeWrapper, tt))
+						taskTypeCounter = taskTypeCounter + 1;
+				}
+				
+				call $Log(call $StrConcat("taskCounter = ", taskCounter));
+				call $Log(call $StrConcat("taskTypeCounter = ", taskTypeCounter));
+				
+				if (taskCounter != taskTypeCounter)
+				{
+					call $Log("error: not every task type is mapped in the process");
+					return false;
+				}
+				
+				return true;	
+			}
+	}
+
+	TaskType: ProcessEntity
+	{
+		Base.BetaValidation;
+		Base.GammaValidation;
+		ComplexEntity.Children;
+		ProcessEntity.AlternativeNames;
+		
+		// P4) Each task type is created by an actor, who will not necessarily perform it
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Actor;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot Creator: ComplexEntity.Children;
+		
+		// P5) Each task type may have a set of eligible actor types that may perform instances of that task type
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $ActorType;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 0;
+			slot Max : ComplexEntity.Children.C.Card.Max = -1;
+		};
+		slot EligibleActorTypes: ComplexEntity.Children;
+		
+		// P6) A task type may alternatively be assigned to a set of actors who are authorized
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Actor;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 0;
+			slot Max : ComplexEntity.Children.C.Card.Max = -1;
+		};
+		slot EligibleActors: ComplexEntity.Children;
+		
+		// P7) For each task type, one may stipulate the artifact types used
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $ArtifactType;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 0;
+			slot Max : ComplexEntity.Children.C.Card.Max = -1;
+		};
+		slot UsedArtifactTypes: ComplexEntity.Children;
+		
+		// P7) For each task type, one may stipulate the artifact types produced
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $ArtifactType;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 0;
+			slot Max : ComplexEntity.Children.C.Card.Max = -1;
+		};
+		slot ProducedArtifactTypes: ComplexEntity.Children;
+
+		// P8) Task types have an expected duration
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Number;	// Duration is a number, measured in days, instead of DateTime
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot ExpectedDuration: ComplexEntity.Children;
+		
+		// P9) Critical task types are those whose instances are critical tasks
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Bool;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot IsCritical: ComplexEntity.Children;
+	}
+
+	// NOTE: Task is not an instance of TaskType, as the latter is not responsible for the structure of the former!
+	Task: ComplexEntity
+	{
+		ComplexEntity.Children;
+		
+		// Tasks have a schema they must conform to (TaskType), but they are not an instance of it, as they have different features
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			@Type.Type.C
+			@ComplexEntity.Children.T
+			slot Type : ComplexEntity.Children.T.T.T = $TaskType;
+			
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};	
+		slot TaskTypeRef: ComplexEntity.Children;
+		
+		// P12) Each task has a begin date
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $DateTime;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 0;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot BeginDate: ComplexEntity.Children;
+		
+		// P12) Each task has an end date
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $DateTime;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 0;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot EndDate: ComplexEntity.Children;
+		
+		// P13) Tasks are associated with artifacts used
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Artifact;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 0;
+			slot Max : ComplexEntity.Children.C.Card.Max = -1;
+		};
+		slot UsedArtifacts: ComplexEntity.Children;
+		
+		// P13) Tasks are associated with artifacts produced
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Artifact;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 0;
+			slot Max : ComplexEntity.Children.C.Card.Max = -1;
+		};
+		slot ProducedArtifacts: ComplexEntity.Children;
+		
+		// P13) Tasks are associated with performing actors
+		// NOTE: this slot is not optional, as we believe every task must be performed by at least one actor
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Actor;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = -1;
+		};
+		slot PerformingActors: ComplexEntity.Children;
+		
+		@Base.AlphaValidation.OpSig
+		@Base.AlphaValidation.T
+		@Base.AlphaValidation.C
+		slot AlphaValidation : Base.AlphaValidation = 
+			operation Bool ID::TaskAlpha(ID instance)
+			{
+				call $Log(call $StrConcat("###### Task Alpha ###### ", instance));
+				Object taskType = call $GetRelevantAttributeValue(instance, $Task.TaskTypeRef);
+				
+				// If we do not have a referenced task type, then the entity is not a concrete task (i.e. CodingTask)
+				if (taskType == null)
+					return true;
+				
+				Object[] performingActors = call $GetRelevantAttributeValues(instance, $Task.PerformingActors);
+				call $Log(call $StrConcat("performing actors: ", performingActors));
+							
+				
+				// P6) P17) Authorized actor validation
+				// NOTE: we check this first, as we interpreted this requirement being stronger than P5)
+				Object[] eligibleActors = call $GetRelevantAttributeValues(taskType, $TaskType.EligibleActors);
+					
+				if (!call $IsListEmpty(eligibleActors))
+				{
+					for (Object a : performingActors)
+					{
+						if (!call $ListContains(a, eligibleActors))
+						{
+							call $Log(call $StrConcat("actor is not authorized for task based on eligible actors list: ", a));
+							return false;
+						}	
+					}
+				}
+				
+				// P5) P17) Actor type validation
+				// NOTE: we only check this after P6), as we deemed that to be the stronger requirement
+				else
+				{
+					Object[] eligibleActorTypes = call $GetRelevantAttributeValues(taskType, $TaskType.EligibleActorTypes);
+					
+					if (!call $IsListEmpty(eligibleActorTypes))
+					{
+						for (Object a : performingActors)
+						{
+							if (!call $CanActorPerformTaskBasedOnActorType(instance, a))
+							{
+								call $Log(call $StrConcat("actor is not authorized for task based on its type: ", a));
+								return false;
+							}
+						}
+					}
+				}
+								
+				// P14) Every artifact used in a task must instantiate one of the artifact types stipulated for the task type
+				// NOTE: Artifacts do not instantiate Artifact Types in our solution, rather, they have a slot for the types
+				Object[] usedArtifactTypes = call $GetRelevantAttributeValues(taskType, $TaskType.UsedArtifactTypes);
+				Object[] usedArtifacts = call $GetRelevantAttributeValues(instance, $Task.UsedArtifacts);
+				call $Log(call $StrConcat("used artifact types: ", usedArtifactTypes));
+				Object cnt = 0;
+				
+				if (!call $IsListEmpty(usedArtifactTypes))
+				{
+					cnt = 0;
+					for (Object a : usedArtifacts)
+					{
+						cnt = cnt + 1;
+						if (!call $IsArtifactTypeValid(a, usedArtifactTypes))
+						{
+							call $Log(call $StrConcat("artifact is not valid as a 'used artifact' based on its type: ", a));
+							return false;
+						}
+					}
+					
+					// If used artifact types are present, then there must be at least one used artifact
+					if (cnt == 0)
+					{
+						call $Log("error: no used artifacts found in task");
+						return false;
+					}
+				}
+				
+				
+				// P15) Every artifact produced in a task must instantiate one of the artifact types stipulated for the task type
+				Object[] producedArtifactTypes = call $GetRelevantAttributeValues(taskType, $TaskType.ProducedArtifactTypes);
+				Object[] producedArtifacts = call $GetRelevantAttributeValues(instance, $Task.ProducedArtifacts);
+				call $Log(call $StrConcat("produced artifact types: ", producedArtifactTypes));
+				
+				if (!call $IsListEmpty(producedArtifactTypes))
+				{
+					cnt = 0;
+					for (Object a : producedArtifacts)
+					{
+						cnt = cnt + 1;
+						if (!call $IsArtifactTypeValid(a, producedArtifactTypes))
+						{
+							call $Log(call $StrConcat("artifact is not valid as a 'produced artifact' based on its type: ", a));
+							return false;
+						}
+					}
+					
+					// If produced artifact types are present, then there must be at least one produced artifact
+					if (cnt == 0)
+					{
+						call $Log("error: no produced artifacts found in task");
+						return false;
+					}
+				}
+					
+				// P9) Critical tasks must be performed by a senior actor
+				Object isCritical = call $GetRelevantAttributeValue(taskType, $TaskType.IsCritical);
+				if (isCritical!=null&&isCritical)
+				{
+					for (Object a : performingActors)
+					{
+						Object[] seniorActorTypes = call $GetRelevantAttributeValues(a, $Actor.ActorTypes);
+						Object isSenior = false;
+						
+						for (Object sat : seniorActorTypes)
+						{
+							if (call $DerivesFrom($SeniorActorType, sat))
+								isSenior = true;
+						}
+						
+						if (!isSenior)
+						{
+							call $Log(call $StrConcat("task is critical, but actor is not a senior actor: ", a));
+							return false;
+						}	
+					}
+				}
+				
+				
+				call $Log("###### Task Alpha DONE ######");
+				return true;	
+			}
+	}
+	
+	TaskWrapper: ComplexEntity
+	{
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			@Type.Type.C
+			@ComplexEntity.Children.T
+			slot Type : ComplexEntity.Children.T.T.T = $Task;			
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot TaskRef: ComplexEntity.Children;
+		
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			@Type.Type.C
+			@ComplexEntity.Children.T
+			slot Type : ComplexEntity.Children.T.T.T = $TaskTypeWrapper;
+			
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};	
+		slot TaskTypeWrapperRef: ComplexEntity.Children;
+		
+		@Base.AlphaValidation.OpSig
+		@Base.AlphaValidation.T
+		@Base.AlphaValidation.C
+		slot AlphaValidation : Base.AlphaValidation = 
+			operation Bool ID::TaskWrapperAlpha(ID instance)
+			{
+				Object taskTypeWrapperRef = call $GetRelevantAttributeValue(instance, $TaskWrapper.TaskTypeWrapperRef);
+				Object taskRef = call $GetRelevantAttributeValue(instance, $TaskWrapper.TaskRef);
+				
+				// If we do not have a referenced task type, then the entity is not a concrete task (i.e. CodingTask)
+				if (taskTypeWrapperRef == null)	return true;				
+				Object taskType = call $GetRelevantAttributeValue(taskTypeWrapperRef, $TaskTypeWrapper.TaskTypeRef);
+				
+				//If the task type wrapper is referenced, then the task type must also be referenced
+				if (taskRef==null) return false;				
+				Object taskType2 = call $GetRelevantAttributeValue(taskRef, $Task.TaskTypeRef);
+				
+				//The task type pointed by the task must equal with the task type associated with the task type wrapper referenced
+				if (taskType!=taskType2) return false;
+				
+				
+				return true;	
+			}		
+	}
+	
+	// Entity used to handle list elements like tasks, task types, and gateways
+	ListItem: ComplexEntity
+	{
+		ComplexEntity.Children;
+		Base.AlphaValidation;
+		
+		// P2) The ordering can be found here and in the instances of ListItem (NextElements)
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			@Type.Type.C
+			@ComplexEntity.Children.T
+			slot Type : ComplexEntity.Children.T.T.T = $ListItem;
+			
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@ComplexEntity.Children.C
+		slot NextElements: ComplexEntity.Children;
+	}
+	
+	TaskTypeWrapper: ListItem
+	{
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			@Type.Type.C
+			@ComplexEntity.Children.T
+			slot Type : ComplexEntity.Children.T.T.T = $TaskType;
+			
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot TaskTypeRef: ComplexEntity.Children;
+		
+		@T: ListItem.NextElements.T =
+		Type : ListItem.NextElements.T.Type
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			slot Type : ListItem.NextElements.T.Type.Type = $Gateway;
+			ListItem.NextElements.T.Type.IsInclusive;
+		};		
+		@C: ComplexEntity.Children.C =
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 0;	// If it is 0, then it is a final task
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot NextElements: ListItem.NextElements;
+	}
+	
+	// P2) Ordering constraints between task types are established through gateways
+	// Gateways work as ListItems, as they do not reference a reusable, schema-like entity like TaskType
+	Gateway: ListItem
+	{
+		@T: ListItem.NextElements.T =
+		Type : ListItem.NextElements.T.Type
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			@Type.Type.C
+			@ComplexEntity.Children.T
+			slot Type : ListItem.NextElements.T.Type.Type = $ListItem;
+			
+			ListItem.NextElements.T.Type.IsInclusive;
+		};
+		@C: ComplexEntity.Children.C =
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;
+			
+			@Cardinality.Minimum.T
+			@Cardinality.Minimum.C
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			
+			@Cardinality.Maximum.T
+			@Cardinality.Maximum.C
+			slot Max : ComplexEntity.Children.C.Card.Max = -1;
+		};
+		slot NextElements: ListItem.NextElements;
+	}
+	
+	Sequencing: Gateway
+	{
+		@Gateway.NextElements.T
+		@C: Gateway.NextElements.C =
+		Card : Gateway.NextElements.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : Gateway.NextElements.C.Card.Min = 1;
+			slot Max : Gateway.NextElements.C.Card.Max = 1;
+		};
+		slot NextElements: Gateway.NextElements;
+	}
+	
+	AndSplit: Gateway
+	{
+		@Gateway.NextElements.T
+		@C: Gateway.NextElements.C =
+		Card : Gateway.NextElements.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : Gateway.NextElements.C.Card.Min = 2;
+			slot Max : Gateway.NextElements.C.Card.Max = -1;
+		};
+		slot NextElements: Gateway.NextElements;
+	}
+	
+	OrSplit: Gateway
+	{
+		@Gateway.NextElements.T
+		@C: Gateway.NextElements.C =
+		Card : Gateway.NextElements.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : Gateway.NextElements.C.Card.Min = 2;
+			slot Max : Gateway.NextElements.C.Card.Max = -1;
+		};
+		slot NextElements: Gateway.NextElements;
+	}
+	
+	AndJoin: Gateway
+	{
+		@Gateway.NextElements.T
+		@C: Gateway.NextElements.C =
+		Card : Gateway.NextElements.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : Gateway.NextElements.C.Card.Min = 1;
+			slot Max : Gateway.NextElements.C.Card.Max = 1;
+		};
+		slot NextElements: Gateway.NextElements;
+	}
+	
+	OrJoin: Gateway
+	{
+		@Gateway.NextElements.T
+		@C: Gateway.NextElements.C =
+		Card : Gateway.NextElements.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : Gateway.NextElements.C.Card.Min = 1;
+			slot Max : Gateway.NextElements.C.Card.Max = 1;
+		};
+		slot NextElements: Gateway.NextElements;
+	}
+
+	
+	
+	/*
+	 *  
+	 * 									Actors and artifacts: domain-agnostic concepts
+	 * 								------------------------------------------------------
+	 */	
+	
+	ActorType: ProcessEntity
+	{
+		ProcessEntity.AlternativeNames;
+		ComplexEntity.Children;
+		
+		// P18) Actor types may specialize other actor types
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $ActorType;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 0;
+			slot Max : ComplexEntity.Children.C.Card.Max = -1;
+		};
+		slot SpecializedActorTypes: ComplexEntity.Children;
+		
+		// NOTE: alpha validation could also be done to avoid circles in the specialization graph
+	}
+	
+	// P9) S13) Senior is an ActorType, of which SeniorManager and SeniorAnalyst is an instance of
+	SeniorActorType: ActorType
+	{
+		ProcessEntity.AlternativeNames;
+		ComplexEntity.Children;
+		ActorType.SpecializedActorTypes;
+	}
+	
+	Actor: ProcessEntity
+	{
+		ComplexEntity.Children;
+		
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $String;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot Name: ComplexEntity.Children;
+		
+		// P15) An actor may have more than one actor type
+		// NOTE: contracts would probably be a more elegant solution
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $ActorType;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = -1;
+		};
+		slot ActorTypes: ComplexEntity.Children;
+	}
+	
+	ArtifactType: ProcessEntity
+	{
+		ProcessEntity.AlternativeNames;
+	}
+	
+	Artifact: ProcessEntity
+	{
+		ProcessEntity.AlternativeNames;
+		ComplexEntity.Children;
+		Base.AlphaValidation;
+		
+		// P16) An artifact may have more than one artifact type
+		// NOTE: contracts would probably be a more elegant solution
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $ArtifactType;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = -1;
+		};
+		slot ArtifactTypes: ComplexEntity.Children;
+	}
+	
+
+	
+	/*
+	 *  
+	 * 										Processes and tasks: software engineering domain
+	 * 										----------------------------------------------
+	 */
+	 
+	RequirementsAnalysis: TaskType
+	{
+		// S11) Bob Brown created all task types in the sample Acme software engineering process
+		slot Creator: TaskType.Creator = $BobBrown;
+		
+		slot ExpectedDuration: TaskType.ExpectedDuration = 14;
+		
+		slot IsCritical: TaskType.IsCritical = false;
+		
+		// S1) A requirements analysis is performed by an analyst
+		slot EligibleActorTypes: TaskType.EligibleActorTypes = [$Analyst];
+		
+		// S1) A requirements analysis produces a requirements specification
+		slot ProducedArtifactTypes: TaskType.ProducedArtifactTypes = [$RequirementsSpecification];
+	}
+	
+	Design: TaskType
+	{
+		// S11) Bob Brown created all task types in the sample Acme software engineering process
+		slot Creator: TaskType.Creator = $BobBrown;
+		
+		slot ExpectedDuration: TaskType.ExpectedDuration = 14;
+		
+		slot IsCritical: TaskType.IsCritical = false;
+		
+		slot EligibleActorTypes: TaskType.EligibleActorTypes = [$SoftwareArchitect];
+	}
+
+	TestCaseDesign: TaskType
+	{
+		// S11) Bob Brown created all task types in the sample Acme software engineering process
+		slot Creator: TaskType.Creator = $BobBrown;
+		
+		slot ExpectedDuration: TaskType.ExpectedDuration = 21;
+		
+		// S13) Designing test cases is a critical task
+		slot IsCritical: TaskType.IsCritical = true;
+		
+		// S13) A test case design is performed by a senior analyst
+		// NOTE: we found S2) and S13) contradicting each other, and went with the latter
+		slot EligibleActorTypes: TaskType.EligibleActorTypes = [$SeniorAnalyst];
+		
+		// S2) A test case design produces test cases
+		slot ProducedArtifactTypes: TaskType.ProducedArtifactTypes = [$TestCase];
+	}
+	
+	Coding: TaskType
+	{
+		// S11) Bob Brown created all task types in the sample Acme software engineering process
+		slot Creator: TaskType.Creator = $BobBrown;
+		
+		slot ExpectedDuration: TaskType.ExpectedDuration = 90;
+		
+		slot IsCritical: TaskType.IsCritical = false;
+		
+		// S3) An occurence of coding is performed by a developer
+		slot EligibleActorTypes: TaskType.EligibleActorTypes = [$Developer];
+		
+		// S3) An occurence of coding produces code
+		slot ProducedArtifactTypes: TaskType.ProducedArtifactTypes = [$Code];
+	
+		// S3) An occurence of coding must reference one or more programming languages employed
+		slot UsedArtifactTypes: TaskType.UsedArtifactTypes = [$ProgrammingLanguage];		
+	}
+	
+	TestDesignReview: TaskType
+	{
+		// S11) Bob Brown created all task types in the sample Acme software engineering process
+		slot Creator: TaskType.Creator = $BobBrown;
+		
+		slot ExpectedDuration: TaskType.ExpectedDuration = 14;
+		
+		slot IsCritical: TaskType.IsCritical = false;
+	
+		// S13) Test cases must be validated by a test design review
+		slot UsedArtifactTypes: TaskType.UsedArtifactTypes = [$TestCase];
+	}
+	
+	Testing: TaskType
+	{
+		// S11) Bob Brown created all task types in the sample Acme software engineering process
+		slot Creator: TaskType.Creator = $BobBrown;
+		
+		// S12) The expected duration of testing is 9 days
+		slot ExpectedDuration: TaskType.ExpectedDuration = 9;
+		
+		slot IsCritical: TaskType.IsCritical = false;
+		
+		// S8) Testing is performed by a tester
+		slot EligibleActorTypes: TaskType.EligibleActorTypes = [$Tester];
+		
+		// S8) Testing produces a test report
+		slot ProducedArtifactTypes: TaskType.ProducedArtifactTypes = [$TestReport];
+	
+		// S3) An occurence of coding must reference one or more programming languages employed
+		slot UsedArtifactTypes: TaskType.UsedArtifactTypes = [$TestCase];
+	}
+
+	AcmeSoftwareEngineeringProcessType: ProcessType
+	{
+		slot Elements: ProcessType.Elements = [$AcmeReqAnTT, $AcmeAndSplit, $AcmeDesignTT, $AcmeTestCaseDesignTT,
+			$AcmeSequencing01, $AcmeSequencing02, $AcmeCodingTT, $AcmeTestDesignReviewTT, $AcmeAndJoin, $AcmeTestingTT
+		];
+	}
+
+	AcmeReqAnTT: TaskTypeWrapper
+	{
+		slot TaskTypeRef: TaskTypeWrapper.TaskTypeRef = $RequirementsAnalysis;
+		slot NextElements: TaskTypeWrapper.NextElements = $AcmeAndSplit;
+	}
+	
+	AcmeDesignTT: TaskTypeWrapper
+	{
+		slot TaskTypeRef: TaskTypeWrapper.TaskTypeRef = $Design;
+		slot NextElements: TaskTypeWrapper.NextElements = $AcmeSequencing01;
+	}
+	
+	AcmeTestCaseDesignTT: TaskTypeWrapper
+	{
+		slot TaskTypeRef: TaskTypeWrapper.TaskTypeRef = $TestCaseDesign;
+		slot NextElements: TaskTypeWrapper.NextElements = $AcmeSequencing02;
+	}
+	
+	AcmeCodingTT: TaskTypeWrapper
+	{
+		slot TaskTypeRef: TaskTypeWrapper.TaskTypeRef = $Coding;
+		slot NextElements: TaskTypeWrapper.NextElements = $AcmeAndJoin;
+	}
+	
+	AcmeTestDesignReviewTT: TaskTypeWrapper
+	{
+		slot TaskTypeRef: TaskTypeWrapper.TaskTypeRef = $TestDesignReview;
+		slot NextElements: TaskTypeWrapper.NextElements = $AcmeAndJoin;
+	}
+	
+	AcmeTestingTT: TaskTypeWrapper
+	{
+		slot TaskTypeRef: TaskTypeWrapper.TaskTypeRef = $Testing;
+		slot NextElements: TaskTypeWrapper.NextElements = [];
+	}
+	
+	AcmeAndSplit: AndSplit
+	{
+		slot NextElements: AndSplit.NextElements = [$AcmeDesignTT, $AcmeTestCaseDesignTT];
+	}
+	
+	AcmeSequencing01: Sequencing
+	{
+		slot NextElements: Sequencing.NextElements = $AcmeCodingTT;
+	}
+	
+	AcmeSequencing02: Sequencing
+	{
+		slot NextElements: Sequencing.NextElements = $AcmeTestDesignReviewTT;
+	}
+	
+	AcmeAndJoin: AndJoin
+	{
+		slot NextElements: AndJoin.NextElements = $AcmeTestingTT;
+	}
+
+	AcmeSoftwareEngineeringProcess01: Process
+	{
+		slot Elements: Process.Elements = [$AcmeReqAnW, $AcmeDesignW, $AcmeTestCaseDesignW, $AcmeCodingW, $AcmeTestDesignReviewW, $AcmeTestingW];
+		slot ProcessTypeSchema: Process.ProcessTypeSchema = $AcmeSoftwareEngineeringProcessType;
+	}
+	
+	
+	AcmeReqAn: Task
+	{
+		slot TaskTypeRef: Task.TaskTypeRef = $RequirementsAnalysis;
+		slot BeginDate: Task.BeginDate = $AcmeReqAnBeginDate;
+		slot EndDate: Task.EndDate = $AcmeReqAnEndDate;
+		slot PerformingActors: Task.PerformingActors = [$BobBrown];
+		slot ProducedArtifacts: Task.ProducedArtifacts = [$AcmeRequirementsSpecification];
+	}
+	
+	AcmeReqAnW: TaskWrapper
+	{
+		slot TaskTypeRef: TaskWrapper.TaskTypeWrapperRef = $AcmeReqAnTT;
+		slot TaskRef : TaskWrapper.TaskRef = $AcmeReqAn;
+	}
+	
+	AcmeDesign: Task
+	{
+		slot TaskTypeRef: Task.TaskTypeRef = $Design;
+		slot PerformingActors: Task.PerformingActors = [$ArchitectAnn];
+	}
+	
+	AcmeDesignW: TaskWrapper
+	{
+		slot TaskTypeRef: TaskWrapper.TaskTypeWrapperRef = $AcmeDesignTT;
+		slot TaskRef : TaskWrapper.TaskRef = $AcmeDesign;
+	}
+	
+	AcmeTestCaseDesign: Task
+	{
+		slot TaskTypeRef: Task.TaskTypeRef = $TestCaseDesign;
+		slot PerformingActors: Task.PerformingActors = [$AnalystJoe];
+		slot ProducedArtifacts: Task.ProducedArtifacts = [$AcmeTestCase01, $AcmeTestCase02];
+	}
+	
+	AcmeTestCaseDesignW: TaskWrapper
+	{
+		slot TaskTypeRef: TaskWrapper.TaskTypeWrapperRef = $AcmeTestCaseDesignTT;
+		slot TaskRef : TaskWrapper.TaskRef = $AcmeTestCaseDesign;
+	}
+	
+	CodingTask: Task
+	{
+		ComplexEntity.Children;
+		Task.TaskTypeRef;
+		Task.BeginDate;
+		Task.EndDate;
+		Task.UsedArtifacts;
+		Task.ProducedArtifacts;
+		Task.PerformingActors;
+		
+		@Base.AlphaValidation.OpSig
+		@Base.AlphaValidation.T
+		@Base.AlphaValidation.C
+		slot AlphaValidation : Task.AlphaValidation = 
+			operation Bool ID::CodingTaskAlpha(ID instance)
+			{
+				Object[] usedArtifacts = call $GetRelevantAttributeValues(instance, $Task.UsedArtifacts);
+				for (Object ua : usedArtifacts)
+				{
+					if (ua == $COBOL)
+					{
+						// S5) Coding in COBOL always produces COBOL code
+						Object[] producedArtifacts = call $GetRelevantAttributeValues(instance, $Task.ProducedArtifacts);
+						for (Object prod : producedArtifacts)
+						{
+							Object[] prodTypes = call $GetRelevantAttributeValues(prod, $Artifact.ArtifactTypes);
+							for (Object pt : prodTypes)
+							{
+								if (pt == $Code)
+								{
+									if (!call $DerivesFrom($COBOLCode, prod))
+									{
+										call $Log(call $StrConcat("produced code is not a COBOL code, although it was written in COBOL: ", prod));
+										return false;
+									}
+								}
+							}
+						}
+						
+						// S7) Ann Smith is the only one allowed to code in COBOL
+						Object[] performingActors = call $GetRelevantAttributeValues(instance, $Task.PerformingActors);
+						for (Object pa : performingActors)
+						{
+							if (pa != $AnnSmith)
+							{
+								call $Log(call $StrConcat("actor is not Ann Smith, only she is allowed to code in COBOL: ", pa));
+								return false;
+							}
+						}
+					}
+				}
+
+				return true;
+			}	
+	}
+	
+	TestingTask: Task
+	{
+		ComplexEntity.Children;
+		Task.TaskTypeRef;
+		Task.BeginDate;
+		Task.EndDate;
+		Task.UsedArtifacts;
+		Task.ProducedArtifacts;
+		Task.PerformingActors;
+		
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			@Type.Type.C
+			@ComplexEntity.Children.T
+			slot Type : ComplexEntity.Children.T.T.T = $TestingAssociation;
+			
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;
+			slot Min : ComplexEntity.Children.C.Card.Min = 0;
+			slot Max : ComplexEntity.Children.C.Card.Max = -1;
+		};	
+		slot TestingAssociations: ComplexEntity.Children;
+		
+		@Base.AlphaValidation.OpSig
+		@Base.AlphaValidation.T
+		@Base.AlphaValidation.C
+		slot AlphaValidation : Task.AlphaValidation = 
+			operation Bool ID::TestingTaskAlpha(ID instance)
+			{
+				call $Log("****** TESTING TASK ALPHA ********");
+				
+				Object[] usedArtifacts = call $GetRelevantAttributeValues(instance, $Task.UsedArtifacts);
+				Object[] producedArtifacts = call $GetRelevantAttributeValues(instance, $Task.ProducedArtifacts);
+				Object[] testingAssociations = call $GetRelevantAttributeValues(instance, $TestingTask.TestingAssociations);
+				
+				// S9) Every tested artifact must have its associated test report
+				for (Object ua : usedArtifacts)
+				{
+					Object artifactFound = false;
+					for (Object ta : testingAssociations)
+					{
+						Object testedArtifact = call $GetRelevantAttributeValue(ta, $TestingAssociation.TestedArtifact);
+						Object associatedTestReport = call $GetRelevantAttributeValue(ta, $TestingAssociation.AssociatedTestReport);
+						
+						if (!call $ListContains(associatedTestReport, producedArtifacts))
+						{
+							call $Log(call $StrConcat("associated test report not found amongst produced artifacts: ", associatedTestReport));
+							return false;
+						}
+						
+						if (ua == testedArtifact)
+							artifactFound = true;
+					}
+					
+					if (!artifactFound)
+					{
+						call $Log(call $StrConcat("tested artifact must have an associated test report: ", ua));
+						return false;
+					}
+				}
+
+				call $Log("****** TESTING TASK ALPHA DONE ********");
+				return true;
+			}	
+	}
+	
+	// S9) Every tested artifact must have an associated test report
+	TestingAssociation: ComplexEntity
+	{
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			@Type.Type.C
+			@ComplexEntity.Children.T
+			slot Type : ComplexEntity.Children.T.T.T = $Artifact;
+			
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};	
+		slot TestedArtifact: ComplexEntity.Children;
+		
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			@Type.Type.C
+			@ComplexEntity.Children.T
+			slot Type : ComplexEntity.Children.T.T.T = $Artifact;
+			
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};	
+		slot AssociatedTestReport: ComplexEntity.Children;
+		
+		@Base.AlphaValidation.OpSig
+		@Base.AlphaValidation.T
+		@Base.AlphaValidation.C
+		slot AlphaValidation : Base.AlphaValidation = 
+			operation Bool ID::TestingAssociationAlpha(ID instance)
+			{
+				// The AssociatedTestReport slot must be of type TestReport
+				Object report = call $GetRelevantAttributeValue(instance, $TestingAssociation.AssociatedTestReport);
+				Object[] types = call $GetRelevantAttributeValues(report, $Artifact.ArtifactTypes);
+				
+				for (Object t : types)
+				{
+					if (t == $TestReport)
+						return true;
+				}
+				
+				return false;
+			}
+	}
+	
+	AcmeCoding: CodingTask
+	{
+		slot TaskTypeRef: Task.TaskTypeRef = $Coding;
+		slot PerformingActors: Task.PerformingActors = [$AnnSmith];
+		slot UsedArtifacts: Task.UsedArtifacts = [$COBOL];
+		slot ProducedArtifacts: Task.ProducedArtifacts = [$AcmeCode01];
+	}
+	
+	AcmeCodingW: TaskWrapper
+	{
+		slot TaskTypeRef: TaskWrapper.TaskTypeWrapperRef = $AcmeCodingTT;
+		slot TaskRef : TaskWrapper.TaskRef = $AcmeCoding;
+	}
+	
+	AcmeTestDesignReview: Task
+	{
+		slot TaskTypeRef: Task.TaskTypeRef = $TestDesignReview;
+		slot PerformingActors: Task.PerformingActors = [$BobBrown];
+		slot UsedArtifacts: Task.UsedArtifacts = [$AcmeTestCase01, $AcmeTestCase02];
+	}
+	
+	AcmeTestDesignReviewW: TaskWrapper
+	{
+		slot TaskTypeRef: TaskWrapper.TaskTypeWrapperRef = $AcmeTestDesignReviewTT;
+		slot TaskRef : TaskWrapper.TaskRef = $AcmeTestDesignReview;
+	}
+	
+	AcmeTesting: TestingTask
+	{
+		slot TaskTypeRef: Task.TaskTypeRef = $Testing;
+		slot PerformingActors: Task.PerformingActors = [$TesterThomas];
+		slot UsedArtifacts: Task.UsedArtifacts = [$AcmeTestCase01, $AcmeTestCase02];
+		slot ProducedArtifacts: Task.ProducedArtifacts = [$AcmeTestReport01, $AcmeTestReport02];
+		slot TestingAssociations: TestingTask.TestingAssociations = [$AcmeTestingAssociation01, $AcmeTestingAssociation02];
+	}
+	
+	AcmeTestingW: TaskWrapper
+	{
+		slot TaskTypeRef: TaskWrapper.TaskTypeWrapperRef = $AcmeTestingTT;
+		slot TaskRef : TaskWrapper.TaskRef = $AcmeTesting;
+	}
+	
+	AcmeTestingAssociation01: TestingAssociation
+	{
+		slot TestedArtifact: TestingAssociation.TestedArtifact = $AcmeTestCase01;
+		slot AssociatedTestReport: TestingAssociation.AssociatedTestReport = $AcmeTestReport01;
+	}
+	
+	AcmeTestingAssociation02: TestingAssociation
+	{
+		slot TestedArtifact: TestingAssociation.TestedArtifact = $AcmeTestCase02;
+		slot AssociatedTestReport: TestingAssociation.AssociatedTestReport = $AcmeTestReport02;
+	}
+	
+	AcmeReqAnBeginDate: DateTime
+	{
+		slot Year: DateTime.Year = 2019;
+		slot Month: DateTime.Month = 6;
+		slot Day: DateTime.Day = 15;
+	}
+	
+	AcmeReqAnEndDate: DateTime
+	{
+		slot Year: DateTime.Year = 2019;
+		slot Month: DateTime.Month = 6;
+		slot Day: DateTime.Day = 30;
+	}
+	
+	
+	/*
+	 *  
+	 * 									Actors and artifacts: software engineering domain
+	 * 								--------------------------------------------------------
+	 */	
+	
+	Manager: ActorType { }
+	SeniorManager: SeniorActorType
+	{
+		slot SpecializedActorTypes: ActorType.SpecializedActorTypes = [$Manager];
+	}
+	
+	Analyst: ActorType { }
+	SeniorAnalyst: SeniorActorType
+	{
+		slot SpecializedActorTypes: ActorType.SpecializedActorTypes = [$Analyst];
+	}
+	
+	SoftwareArchitect: ActorType { }
+	Tester: ActorType { }
+	TestDesigner: ActorType { }
+	Developer: ActorType
+	{
+		slot AlternativeNames: ProcessEntity.AlternativeNames = ["Programmer", "Coder"];
+	}
+	
+	BobBrown: Actor
+	{
+		slot Name: Actor.Name = "Bob Brown";
+		
+		// S11) Bob Brown is an analyst and tester
+		slot ActorTypes: Actor.ActorTypes = [$Analyst, $Tester];
+	}
+	
+	AnnSmith: Actor
+	{
+		slot Name: Actor.Name = "Ann Smith";
+		slot ActorTypes: Actor.ActorTypes = [$Developer];
+	}
+	
+	AnalystJoe: Actor
+	{
+		slot Name: Actor.Name = "Analyst Joe";
+		slot ActorTypes: Actor.ActorTypes = [$SeniorAnalyst];
+	}
+	
+	TesterThomas: Actor
+	{
+		slot Name: Actor.Name = "Tester Thomas";
+		slot ActorTypes: Actor.ActorTypes = [$Tester];
+	}
+	
+	ArchitectAnn: Actor
+	{
+		slot Name: Actor.Name = "Architect Ann";
+		slot ActorTypes: Actor.ActorTypes = [$SoftwareArchitect];
+	}
+	
+	RequirementsSpecification: ArtifactType { }
+	TestCase: ArtifactType { }
+	TestReport: ArtifactType { }
+	ProgrammingLanguage: ArtifactType { }
+	Code: ArtifactType
+	{
+		slot AlternativeNames: ProcessEntity.AlternativeNames = ["Program Code"];
+	}
+	
+	SoftwareEngineeringArtifact: Artifact
+	{
+		ProcessEntity.AlternativeNames;
+		ComplexEntity.Children;
+		Base.AlphaValidation;
+		Artifact.ArtifactTypes;
+		
+		// S10) Software engineering artifacts have a responsible actor
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Actor;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot ResponsibleActor: ComplexEntity.Children;
+		
+		// S10) Software engineering artifacts have a version number
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $String;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot VersionNumber: ComplexEntity.Children;
+	}
+
+	CodeArtifact: SoftwareEngineeringArtifact
+	{
+		ProcessEntity.AlternativeNames;
+		Artifact.ArtifactTypes;
+		ComplexEntity.Children;
+		SoftwareEngineeringArtifact.ResponsibleActor;
+		SoftwareEngineeringArtifact.VersionNumber;
+		
+		// S4) Code must reference the programming languages in which it was written
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Artifact;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	   
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = -1;
+		};
+		slot WrittenIn: ComplexEntity.Children;
+		
+		// By modeling code this way, we can add other slots like 'LinesOfCode'
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Number;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	   
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot LinesOfCode: ComplexEntity.Children;
+		
+		@Base.AlphaValidation.OpSig	
+		@Base.AlphaValidation.T			
+		@Base.AlphaValidation.C				
+		slot AlphaValidation : Base.AlphaValidation = 
+			operation Bool ID::CodeArtifactAlpha(ID instance)
+			{
+				// The type of every CodeArtifact instance has to be 'Code'
+				Object[] artifactTypes = call $GetRelevantAttributeValues(instance, $Artifact.ArtifactTypes);
+				Object isCode = false;
+				for (Object at : artifactTypes)
+				{
+					if (call $DerivesFromOrEquals(at, $Code))
+						isCode = true;
+
+					if (!isCode)
+					{
+						call $Log(call $StrConcat("code artifact is not of type code: ", instance));
+						return false;
+					}
+				}
+				
+				// Check if the type of every artifact in the slot 'WrittenIn' is a programming language
+				Object[] programmingLanguages = call $GetRelevantAttributeValues(instance, $CodeArtifact.WrittenIn);
+				for (Object pl : programmingLanguages)
+				{
+					Object[] plTypes = call $GetRelevantAttributeValues(pl, $Artifact.ArtifactTypes);
+					Object isProgrammingLanguage = false;
+					for (Object t : plTypes)
+					{
+						if (call $DerivesFromOrEquals(t, $ProgrammingLanguage))
+							isProgrammingLanguage = true;
+					}
+					
+					if (!isProgrammingLanguage)
+					{
+						call $Log(call $StrConcat("artifact is not a programming language: ", pl));
+						return false;
+					}
+				}
+				
+				return true;
+			}
+	}
+	
+	COBOLCode: CodeArtifact
+	{
+		ProcessEntity.AlternativeNames;
+		Artifact.ArtifactTypes;
+		ComplexEntity.Children;
+		SoftwareEngineeringArtifact.ResponsibleActor;
+		SoftwareEngineeringArtifact.VersionNumber;
+		CodeArtifact.WrittenIn;
+		CodeArtifact.LinesOfCode;
+		
+		@Base.AlphaValidation.OpSig	
+		@Base.AlphaValidation.T			
+		@Base.AlphaValidation.C				
+		slot AlphaValidation : CodeArtifact.AlphaValidation = 
+			operation Bool ID::COBOLCodeAlpha(ID instance)
+			{
+				// S6) All COBOL code is written in COBOL
+				Object[] programmingLanguages = call $GetRelevantAttributeValues(instance, $CodeArtifact.WrittenIn);
+				Object isCOBOLFound = false;
+				for (Object pl : programmingLanguages)
+				{
+					if (pl == $COBOL)
+						isCOBOLFound = true;
+					
+					if (!isCOBOLFound)
+					{
+						call $Log(call $StrConcat("COBOL code must be written in COBOL: ", instance));
+						return false;
+					}
+				}
+				
+				return true;
+			}
+	}
+	
+	COBOL: Artifact
+	{
+		slot ArtifactTypes: Artifact.ArtifactTypes = [$ProgrammingLanguage];
+	}
+	
+	AcmeCode01: COBOLCode
+	{
+		slot ArtifactTypes: Artifact.ArtifactTypes = [$Code];
+		slot ResponsibleActor: SoftwareEngineeringArtifact.ResponsibleActor = $AnnSmith;
+		slot VersionNumber: SoftwareEngineeringArtifact.VersionNumber = "1.2.1";
+		
+		slot WrittenIn: CodeArtifact.WrittenIn = [$COBOL];
+		slot LinesOfCode: CodeArtifact.LinesOfCode = 2478;
+	}
+	
+	AcmeRequirementsSpecification: SoftwareEngineeringArtifact
+	{
+		slot ArtifactTypes: Artifact.ArtifactTypes = [$RequirementsSpecification];
+		slot ResponsibleActor: SoftwareEngineeringArtifact.ResponsibleActor = $BobBrown;
+		slot VersionNumber: SoftwareEngineeringArtifact.VersionNumber = "1.0.0";
+	}
+	
+	AcmeTestCase01: SoftwareEngineeringArtifact
+	{
+		slot ArtifactTypes: Artifact.ArtifactTypes = [$TestCase];
+		slot ResponsibleActor: SoftwareEngineeringArtifact.ResponsibleActor = $TesterThomas;
+		slot VersionNumber: SoftwareEngineeringArtifact.VersionNumber = "1.0.0";
+	}
+	
+	AcmeTestCase02: SoftwareEngineeringArtifact
+	{
+		slot ArtifactTypes: Artifact.ArtifactTypes = [$TestCase];
+		slot ResponsibleActor: SoftwareEngineeringArtifact.ResponsibleActor = $TesterThomas;
+		slot VersionNumber: SoftwareEngineeringArtifact.VersionNumber = "1.0.1";
+	}
+	
+	AcmeTestReport01: SoftwareEngineeringArtifact
+	{
+		slot ArtifactTypes: Artifact.ArtifactTypes = [$TestReport];
+		slot ResponsibleActor: SoftwareEngineeringArtifact.ResponsibleActor = $TesterThomas;
+		slot VersionNumber: SoftwareEngineeringArtifact.VersionNumber = "1.1.1";
+	}
+	
+	AcmeTestReport02: SoftwareEngineeringArtifact
+	{
+		slot ArtifactTypes: Artifact.ArtifactTypes = [$TestReport];
+		slot ResponsibleActor: SoftwareEngineeringArtifact.ResponsibleActor = $TesterThomas;
+		slot VersionNumber: SoftwareEngineeringArtifact.VersionNumber = "1.1.2";
+	}
+	
+	
+
+	/*
+	 *  
+	 * 											Helper operations and entities
+	 * 										   --------------------------------
+	 */
+
+	DateTime: ComplexEntity
+	 {
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Number;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot Year: ComplexEntity.Children;
+		
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Number;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	   
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot Month: ComplexEntity.Children;
+		
+		
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Number;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot Day: ComplexEntity.Children;
+		
+		@Base.AlphaValidation.OpSig	
+		@Base.AlphaValidation.T			
+		@Base.AlphaValidation.C				
+		slot AlphaValidation : Base.AlphaValidation = 
+			operation Bool ID::DateTimeAlpha(ID instance)
+			{
+				Object year = call $GetRelevantAttributeValue(instance, $DateTime.Year);
+				Object month = call $GetRelevantAttributeValue(instance, $DateTime.Month);
+				Object day = call $GetRelevantAttributeValue(instance, $DateTime.Day);
+				
+				// NOTE: for the sake of simplicity, day-month checks (like 28 days February) are omitted
+				if (year > 9999 || year < 1970 || month < 1 || month > 12 || day < 1 || day > 31)
+					return false;
+				
+				return true;
+			}
+	}
+
+	operation Bool ID::IsListEmpty(Object[] list)
+	{
+		Object cnt = 0;
+		for (Object e : list)
+		{
+			cnt = cnt + 1;
+		}
+		
+		return cnt == 0;
+	}
+
+	operation Bool ID::ListContains(Object obj, Object[] list)
+	{
+		for (Object e : list)
+		{
+			if (obj == e)
+				return true;
+		}
+		return false;
+	}
+	
+	// P17) P18)
+	operation Bool ID::CanActorPerformTaskBasedOnActorType(ID task, ID actor)
+	{
+		if (!call $DerivesFrom($Task, task))
+		{
+			call $Log(call $StrConcat("error: entity is not a task: ", task));
+			return false;
+		}
+		
+		if (!call $DerivesFrom($Actor, actor))
+		{
+			call $Log(call $StrConcat("error: entity is not an actor: ", actor));
+			return false;
+		}
+		
+		Object taskType = call $GetRelevantAttributeValue(task, $Task.TaskTypeRef);
+		Object[] eligibleTypes = call $GetRelevantAttributeValues(taskType, $TaskType.EligibleActorTypes);
+		Object[] actorTypes = call $GetRelevantAttributeValues(actor, $Actor.ActorTypes);
+		
+		call $Log(call $StrConcat("eligible types: ", eligibleTypes));
+		call $Log(call $StrConcat("actor types: ", actorTypes));
+		
+		for (Object t : actorTypes)
+		{
+			if (call $IsActorTypeEligible(t, eligibleTypes))
+				return true;
+		}
+		return false;
+	}
+	
+	operation Bool ID::IsActorTypeEligible(ID actorType, Object[] eligibleTypes)
+	{
+		// If the type is eligible
+		if (call $ListContains(actorType, eligibleTypes))
+		{
+			return true;
+		}
+		
+		// P18) Specialized rules must also apply to the specializing actor
+		// Otherwise, check the specialized types
+		Object[] specializedTypes = call $GetRelevantAttributeValues(actorType, $ActorType.SpecializedActorTypes);
+		for (Object st: specializedTypes)
+		{
+			if (call $IsActorTypeEligible(st, eligibleTypes))
+				return true;
+		}
+		
+		return false;
+	}
+	
+	operation Bool ID::IsArtifactTypeValid(ID artifact, Object[] validTypes)
+	{
+		if (!call $DerivesFrom($Artifact, artifact))
+		{
+			call $Log(call $StrConcat("error: entity is not an artifact: ", artifact));
+			return false;
+		}
+		
+		Object[] artifactTypes = call $GetRelevantAttributeValues(artifact, $Artifact.ArtifactTypes);
+		
+		for (Object at : artifactTypes)
+		{
+			if (call $ListContains(at, validTypes))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+}

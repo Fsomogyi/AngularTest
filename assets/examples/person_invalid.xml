@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Model>
+  <Entity ID="Example.BobSmith.FullName.BobSmithFullName" Meta="Example.ComplexName">
+    <Attributes>
+      <Attribute>Example.BobSmith.FullName.BobSmithFullName.FirstName</Attribute>
+      <Attribute>Example.BobSmith.FullName.BobSmithFullName.LastName</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.BobRobSmith" Meta="Example.Person">
+    <Attributes>
+      <Attribute>Example.BobRobSmith.FullName</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.BobSmith.FullName.BobSmithFullName.LastName" Meta="Example.ComplexName.LastName">
+    <Values>
+      <Value Type="Bootstrap.String">Smith</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.BobRobSmith.FullName.BobRobSmithFullName.FirstName" Meta="Example.ComplexName.FirstName">
+    <Values>
+      <Value Type="Bootstrap.String">Bob</Value>
+      <Value Type="Bootstrap.String">Rob</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.BobRobSmith.FullName.BobRobSmithFullName" Meta="Example.ComplexName">
+    <Attributes>
+      <Attribute>Example.BobRobSmith.FullName.BobRobSmithFullName.FirstName</Attribute>
+      <Attribute>Example.BobRobSmith.FullName.BobRobSmithFullName.LastName</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.BobSmith.FullName.BobSmithFullName.FirstName" Meta="Example.ComplexName.FirstName">
+    <Values>
+      <Value Type="Bootstrap.String">Bob</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.BobSmith" Meta="Example.Person">
+    <Attributes>
+      <Attribute>Example.BobSmith.FullName</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.BobRobSmith.FullName" Meta="Example.Person.FullName">
+    <Values>
+      <Value Type="Reference">Example.BobRobSmith.FullName.BobRobSmithFullName</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.BobBobSmith" Meta="Example.Person">
+    <Attributes>
+      <Attribute>Example.BobBobSmith.FullName</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.BobBobSmith.FullName.BobBobSmithFullName.FirstName" Meta="Example.ComplexName.FirstName">
+    <Values>
+      <Value Type="Bootstrap.String">Bob</Value>
+      <Value Type="Bootstrap.String">Bob</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.BobBobSmith.FullName.BobBobSmithFullName.LastName" Meta="Example.ComplexName.LastName">
+    <Values>
+      <Value Type="Bootstrap.String">Smith</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.BobSmith.FullName" Meta="Example.Person.FullName">
+    <Values>
+      <Value Type="Reference">Example.BobSmith.FullName.BobSmithFullName</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.BobRobSmith.FullName.BobRobSmithFullName.LastName" Meta="Example.ComplexName.LastName">
+    <Values>
+      <Value Type="Bootstrap.String">Smith</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.BobBobSmith.FullName.BobBobSmithFullName" Meta="Example.ComplexName">
+    <Attributes>
+      <Attribute>Example.BobBobSmith.FullName.BobBobSmithFullName.FirstName</Attribute>
+      <Attribute>Example.BobBobSmith.FullName.BobBobSmithFullName.LastName</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.BobBobSmith.FullName" Meta="Example.Person.FullName">
+    <Values>
+      <Value Type="Reference">Example.BobBobSmith.FullName.BobBobSmithFullName</Value>
+    </Values>
+  </Entity>
+</Model>
