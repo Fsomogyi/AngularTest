@@ -1,0 +1,2033 @@
+package BicycleDomain {
+	import Bootstrap.*;
+	import Bootstrap.BuiltInOperations.*;
+	import Bootstrap.Validation.*;
+	import Bootstrap.Validation.Helper.*;
+
+	/*
+	 *  
+	 * 											Basic building blocks
+	 * 										----------------------------
+	 */
+	 
+	//Note: This entity is the entry point for the domain entities helping the separation of concepts and introducing the meaning of "physical artefact"
+	BicycleEntity: ComplexEntity
+	{
+			ComplexEntity.Children;
+			Base.GammaValidation;
+			
+			//1a: A configuration is a physical artefact...
+			//Note: This is modeled by two elements: 
+			//		(i)  an operation (CheckPhysical) that returns true if the entity fulfills all (pre)conditions of being a physical artefact
+			//		(ii) a flag (AbstractEntity) that states explicitly that the entity is not yet a physical (real world) object
+			//
+			// The alpha formula of the bicycle entity is responsible to call the operation when the flag is omitted to validate whether the entity is really
+			// a physical artefact
+			@OpSig : ConstraintContainer = $CheckPhysicalMethodSignature;
+			@T: ComplexEntity.Children.T =
+				T : ComplexEntity.Children.T.T {
+					Type.IsOverwritable;
+					Type.IsPermanent;
+					
+					slot T: ComplexEntity.Children.T.T.T = $Operations.OperationDefinition;
+					slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+				};
+			@C: ComplexEntity.Children.C =				
+			Card : ComplexEntity.Children.C.Card {
+				Cardinality.IsOverwritable;
+				Cardinality.IsPermanent;	
+				slot Min : ComplexEntity.Children.C.Card.Min = 0;
+				slot Max : ComplexEntity.Children.C.Card.Max = 1;
+			};
+			slot CheckPhysical : ComplexEntity.Children = 
+				operation Bool ID::CheckPhysical()
+				{
+						return true;
+				}
+			
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Bool;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 0;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot AbstractEntity: ComplexEntity.Children;
+		
+		@Base.AlphaValidation.OpSig	
+		@Base.AlphaValidation.T			
+		@Base.AlphaValidation.C				
+		slot AlphaValidation : Base.AlphaValidation = 
+			operation Bool ID::BicycleEntityAlpha(ID instance)
+			{
+				//Note: here we check whether the slot exists, not its value!
+				Object isEntityAbstract = call $GetRelevantAttribute(instance, $BicycleEntity.AbstractEntity);
+								
+				//If the entity is not abstract any more, we check whether it fulfills the conditions of being a physical artefact
+				if (isEntityAbstract==null)
+				{
+					//We get all CheckPhysical method from the meta hierarchy and call them
+					//Note: it is not enough to call the most specific one
+					if(!(call $CallCheckPhysicalOnMetaHierarchy(instance, instance)))	
+					{	
+						call $Log(call $StrConcat("\t Validation error: The entity is not marked as abstract, but it is not fully concrete either: ", instance));
+						return false;
+					}
+				}
+					 
+				return true;	
+			}	
+	}
+
+	Configuration: BicycleEntity 
+	{
+		//1a: A configuration ... is composed of components.
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			@Type.Type.C
+			@ComplexEntity.Children.T
+			slot Type : ComplexEntity.Children.T.T.T = $Component;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@ComplexEntity.Children.C
+		slot Components : ComplexEntity.Children;
+		
+		BicycleEntity.AbstractEntity;
+		ComplexEntity.Children;
+		BicycleEntity.AlphaValidation;		
+		
+		@BicycleEntity.CheckPhysical.C
+		@BicycleEntity.CheckPhysical.T
+		@BicycleEntity.CheckPhysical.OpSig
+		slot CheckPhysical : BicycleEntity.CheckPhysical =
+			operation Bool ID::CheckPhysical()
+			{
+				Object[] components = call $GetRelevantAttributeValues(this, $Configuration.Components);
+				
+				//A configuration without components is a valid, physical artefact
+				if(components == null) return true;
+					
+				for(Object component : components)
+				{
+					//If it has an abstract component, it is not a physical artefact
+					//Note: It is not necessary to call CheckPhysical on the components, since their alpha validation already called the method
+					if (call $GetRelevantAttribute(component, $BicycleEntity.AbstractEntity)!=null) return false;
+				}
+				
+				return true;
+			}
+	}
+	
+	Component: BicycleEntity
+	{
+		//1b: A component may be composed of other components or of basic parts
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Component;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@ComplexEntity.Children.C
+		slot Components : ComplexEntity.Children;
+		
+		//2a A component has properties, for example weight...
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Number;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot Weight: ComplexEntity.Children;
+
+		//2b A component has properties, for example ...size... 
+			@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Number;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot Size: ComplexEntity.Children;
+		
+		//2c A component has properties, for example ...colour...
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			//Note: Colour is modeled as a string, but we could use a designated enum here as well
+			slot Type : ComplexEntity.Children.T.T.T = $String;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot Colour: ComplexEntity.Children;
+		
+		//2d A component has properties, for example ...unique serial number.
+		//		Uniqueness is validated by the gamma validation
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $String;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot SerialNumber: ComplexEntity.Children;
+		
+		BicycleEntity.AbstractEntity;
+		ComplexEntity.Children;
+		BicycleEntity.AlphaValidation;
+		
+		//2d A component has properties, for example ...unique serial number.
+		@Base.GammaValidation.C
+		@Base.GammaValidation.T
+		@Base.GammaValidation.OpSig
+		slot ComponentGamma : Base.GammaValidation = 
+			operation Bool ID::UniqueFrameId()
+			{				
+				String[] ids = String:[];
+				ID[] entities = call $GetEntities();
+				for(ID entity : entities)
+				{
+					//We collect all entities derived from $Component
+					if(call $DerivesFrom($Component, entity))
+					{
+						//Uniqueness is checked only for concrete components, since they are part of the physical world. 
+						if (call $GetRelevantAttribute(entity, $BicycleEntity.AbstractEntity)==null)
+						{							
+							Object id = call $GetRelevantAttributeValue(entity, $Component.SerialNumber);
+							if(id != null)
+							{								
+								if(contains(ids, id))
+								{
+									 // ID already found => validation fails
+									call $Log(call $StrConcat("Duplicated serial number found: ", id));
+									return false;
+								}
+								else
+								{	
+									append<String>(ids, id); //We add the new ID to the list of known IDs
+								}
+							}
+						}						
+					}
+				}
+				
+				
+				return true;
+			}
+				
+		@BicycleEntity.CheckPhysical.C
+		@BicycleEntity.CheckPhysical.T
+		@BicycleEntity.CheckPhysical.OpSig
+		slot CheckPhysical : BicycleEntity.CheckPhysical =
+			operation Bool ID::CheckPhysical()
+			{
+				if(call $GetRelevantAttributeValue(this, $Component.Weight) == null) return false;
+				if(call $GetRelevantAttributeValue(this, $Component.Size) == null) return false;
+				if(call $GetRelevantAttributeValue(this, $Component.Colour) == null) return false;
+				if(call $GetRelevantAttributeValue(this, $Component.SerialNumber) == null) return false;
+				
+				Object[] components = call $GetRelevantAttributeValues(this, $Component.Components);
+				
+				//A component without components is a valid, physical artefact
+				if(components == null) return true;
+					
+				for(Object component : components)
+				{
+					//If it has an abstract component, it is not a physical artefact
+					//Note: It is not necessary to call CheckPhysical on the components, since their alpha validation already called the method
+					if (call $GetRelevantAttributeValue(component, $BicycleEntity.AbstractEntity)!=null) return false;
+				}
+				
+				return true;
+			}
+		
+	}
+		
+	//1b: A component may be composed of other components or of basic parts
+	BasicPart: Component 
+	{		
+		// Components and "free" slots (i.e. ComplexEntity.Children) are skipped here, we want to omit them
+		// Other slots are kept (we may want to use them... and they are not optional)		
+		Component.Weight;
+		Component.Size;
+		Component.Colour;
+		Component.SerialNumber;		
+		BicycleEntity.AbstractEntity;
+	}
+	
+	
+	/*
+	 *  
+	 * 											Bicycle components
+	 * 										--------------------------
+	 */
+	
+	// Note: A bicycle component is a component customized for bicycles according to case description in 2017. 
+	// 		 It could be merged with component
+	BicycleComponent: Component
+	{
+		Component.Components;
+		Component.Weight;
+		Component.Size;
+		Component.Colour;
+		Component.SerialNumber;
+		BicycleEntity.AbstractEntity;
+				
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $BicycleMaterial;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot Material: ComplexEntity.Children;
+					
+		ComplexEntity.Children;
+		
+		BicycleEntity.AlphaValidation;
+		
+		@BicycleEntity.CheckPhysical.C
+		@BicycleEntity.CheckPhysical.T
+		@BicycleEntity.CheckPhysical.OpSig
+		slot CheckPhysical : Component.CheckPhysical =
+			operation Bool ID::CheckPhysical()
+			{						
+				//Note: Here we don't need to check the AbstractEntity slot, since enum values are non-abstract by default
+				//		Thus, here we check against null value only
+				if (call $GetRelevantAttributeValue(this, $BicycleComponent.Material)==null) return false;		
+				return true;
+			}
+	}
+		
+	HandleBarComponent: BicycleComponent
+	{		
+		Component.Weight;
+		Component.Size;
+		Component.Colour;
+		Component.SerialNumber;
+		
+		BicycleComponent.Material;
+		BicycleEntity.AbstractEntity;
+	}
+	
+	WheelComponent: BicycleComponent
+	{
+		Component.Weight;
+		Component.Size;	
+		Component.Colour;
+		Component.SerialNumber;
+								
+		BicycleComponent.Material;
+		BicycleEntity.AbstractEntity;		
+	}
+			
+	FrameComponent: BicycleComponent
+	{
+		Component.Weight;	
+		Component.Size;	
+		Component.Colour;
+		Component.SerialNumber;
+						
+		BicycleComponent.Material;
+		BicycleEntity.AbstractEntity;
+		
+		ComplexEntity.Children;
+		BicycleEntity.AlphaValidation;
+		BicycleComponent.CheckPhysical;
+		
+	}
+	
+	ForkComponent: BicycleComponent
+	{
+		Component.Weight;	
+		Component.Size;	
+		Component.Colour;
+		Component.SerialNumber;
+		
+		BicycleComponent.Material;	
+		BicycleEntity.AbstractEntity;	
+	}
+	
+	SeatComponent: BicycleComponent
+	{		
+		Component.Weight;	
+		Component.Size;	
+		Component.Colour;
+		Component.SerialNumber;
+		
+		BicycleComponent.Material;	
+		BicycleEntity.AbstractEntity;	
+	}
+	
+	SuspensionComponent: BicycleComponent
+	{
+		Component.Weight;	
+		Component.Size;	
+		Component.Colour;
+		Component.SerialNumber;
+		
+		BicycleComponent.Material;	
+		BicycleEntity.AbstractEntity;	
+	}
+	
+	//5.1b Electric bikes need enforced brakes and a battery. 
+	EnforcedBrakeComponent: BicycleComponent
+	{
+		Component.Weight;	
+		Component.Size;	
+		Component.Colour;
+		Component.SerialNumber;
+		
+		BicycleComponent.Material;	
+		BicycleEntity.AbstractEntity;	
+	}
+	
+	//5.1b Electric bikes need enforced brakes and a battery. 
+	BatteryComponent: BicycleComponent
+	{
+		Component.Weight;	
+		Component.Size;	
+		Component.Colour;
+		Component.SerialNumber;
+		
+		BicycleComponent.Material;	
+		BicycleEntity.AbstractEntity;				
+	}
+	
+	RacingForkComponent: ForkComponent
+	{
+		Component.Weight;	
+		Component.Size;	
+		Component.Colour;
+		Component.SerialNumber;
+		
+		BicycleComponent.Material;	
+		BicycleEntity.AbstractEntity;
+	}
+		
+	//5.5  A racing fork does not have a suspension. It does not have a mud mount either. 
+	//Note: No need to add this constraint explicitly, since it is not allowed by default
+	RacingFrameComponent: FrameComponent
+	{
+		Component.Weight;	
+		Component.Size;	
+		Component.Colour;
+		Component.SerialNumber;
+				
+		//5.6 A racing frame is specified by top tube length, down tube length, and seat tube length
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Number;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot TopTubeLength: ComplexEntity.Children;
+		
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Number;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot DownTubeLength: ComplexEntity.Children;
+		
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Number;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot SeatTubeLength: ComplexEntity.Children;
+		
+		BicycleComponent.Material;
+		BicycleEntity.AbstractEntity;
+		
+		//5.7 A racing frame is made of steel, aluminum, or carbon. 
+		@Base.AlphaValidation.OpSig	
+		@Base.AlphaValidation.T			
+		@Base.AlphaValidation.C				
+		slot AlphaValidation : BicycleEntity.AlphaValidation = 
+			operation Bool ID::RaceFrameAlpha(ID instance)
+			{
+				ID material = call $GetRelevantAttributeValue(instance, $BicycleComponent.Material);
+				if (material!=null && material!=$Material_Carbon && material!=$Material_Aluminium && material!=$Material_Steel) return false;
+					 
+				return true;	
+			}	
+		
+		@BicycleEntity.CheckPhysical.C
+		@BicycleEntity.CheckPhysical.T
+		@BicycleEntity.CheckPhysical.OpSig
+		slot CheckPhysical : BicycleComponent.CheckPhysical =
+			operation Bool ID::CheckPhysical()
+			{	
+				if (call $GetRelevantAttributeValue(this, $RacingFrameComponent.TopTubeLength)==null) return false;
+				if (call $GetRelevantAttributeValue(this, $RacingFrameComponent.DownTubeLength)==null) return false;
+				if (call $GetRelevantAttributeValue(this, $RacingFrameComponent.SeatTubeLength)==null) return false;
+										
+				return true;
+			}
+	}
+	
+	ProRaceFrameComponent: RacingFrameComponent
+	{
+		Component.Weight;	
+		Component.Size;	
+		Component.Colour;
+		Component.SerialNumber;
+		
+		RacingFrameComponent.TopTubeLength;
+		RacingFrameComponent.DownTubeLength;
+		RacingFrameComponent.SeatTubeLength;
+		BicycleComponent.Material;
+		BicycleEntity.AbstractEntity;
+		
+		@Base.AlphaValidation.OpSig	
+		@Base.AlphaValidation.T			
+		@Base.AlphaValidation.C				
+		slot AlphaValidation : RacingFrameComponent.AlphaValidation = $ProRaceFrameAlpha;			
+	}
+		
+	RocketA1XL: ProRaceFrameComponent
+	{		
+		Component.Size;	
+		Component.Colour;
+		Component.SerialNumber;
+		
+		RacingFrameComponent.TopTubeLength;
+		RacingFrameComponent.DownTubeLength;
+		RacingFrameComponent.SeatTubeLength;
+		BicycleComponent.Material;
+		BicycleEntity.AbstractEntity;
+		
+		//7c  The Rocket-A1-XL has a weight of 920.0 gr.
+		slot Weight: Component.Weight = 920;
+	}
+	
+	/*
+	 *  
+	 * 											Bicycle types
+	 * 										----------------------
+	 */
+	
+	//Note: A bicycle is handled as a configuration 
+	Bicycle: Configuration
+	{	
+		// Slots to handle components
+		//----------------------------
+		
+		//3a  A bicycle is built of components like a frame, a fork, two wheels, and so forth, each of which being a component
+		//  Note: We allow more and less then two wheels and seats to model tandems, unicycles and tricycles as well
+		//	Note: We allow adding further components to bicycles later (see OtherComponents slot)
+		@T: Configuration.Components.T =
+		Type : Configuration.Components.T.Type
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			@Type.Type.C
+			@ComplexEntity.Children.T
+			slot Type: Configuration.Components.T.Type.Type  = $WheelComponent;
+			
+			Configuration.Components.T.Type.IsInclusive;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			
+			@Cardinality.Minimum.T
+			@Cardinality.Minimum.C
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			
+			@Cardinality.Maximum.T
+			@Cardinality.Maximum.C
+			slot Max : ComplexEntity.Children.C.Card.Max = 3;
+		};
+		slot Wheel: Configuration.Components;
+		
+		//5 Every category of bicycle except for racing bikes may be equipped with an electric motor.  Electric bikes need enforced brakes and a battery. 
+		//Note: We could create a component "Electric motor" instead of a simple bool flag, but the task description
+		//		does not describe any attributes of the motor, thus this solution can also cover the task
+		//Note: The exception of racing bikes is handle in the alpha formula ($RacingBike.AlphaValidation)
+		//Note: Enforced brakes and battery is also checked in alpha formula ($BicycleAlpha)
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Bool;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 0;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot IsEquippedWIthElectricMotor: ComplexEntity.Children;
+		
+		@T: Configuration.Components.T =
+		Type : Configuration.Components.T.Type
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			@Type.Type.C
+			@ComplexEntity.Children.T
+			slot Type: Configuration.Components.T.Type.Type  = $ForkComponent;
+			
+			Configuration.Components.T.Type.IsInclusive;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot Fork: Configuration.Components;
+		
+		@T: Configuration.Components.T =
+		Type : Configuration.Components.T.Type
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			@Type.Type.C
+			@ComplexEntity.Children.T
+			slot Type: Configuration.Components.T.Type.Type  = $SeatComponent;
+			
+			Configuration.Components.T.Type.IsInclusive;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+							
+			@Cardinality.Minimum.T
+			@Cardinality.Minimum.C
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+							
+			@Cardinality.Maximum.T
+			@Cardinality.Maximum.C
+			slot Max : ComplexEntity.Children.C.Card.Max = 2;
+		};
+		slot Seat: Configuration.Components;
+		
+		@T: Configuration.Components.T =
+		Type : Configuration.Components.T.Type
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			@Type.Type.C
+			@ComplexEntity.Children.T
+			slot Type: Configuration.Components.T.Type.Type  = $FrameComponent;
+			
+			Configuration.Components.T.Type.IsInclusive;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot Frame: Configuration.Components;
+		
+		@T: Configuration.Components.T =
+		Type : Configuration.Components.T.Type
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			@Type.Type.C
+			@ComplexEntity.Children.T
+			slot Type: Configuration.Components.T.Type.Type  = $BicycleComponent;
+			
+			Configuration.Components.T.Type.IsInclusive;
+		};		
+		@ComplexEntity.Children.C
+		slot OtherComponents: Configuration.Components;
+				
+		//10a Each bicycle model has a regular sales price
+		//Note: The price can be overwritten during instantiation (at any level)
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Number;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 0;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		@MFO : ConstraintContainer = $MustFillOnce;
+		slot SalesPrice: ComplexEntity.Children;
+		
+		
+		//6a  Each category of bicycle is associated with a person acting as category manager
+		//Note: From here on, we have the opportunity to add a category manager. The slot is optional, thus it can be omitted later,
+		//		but before doing so, it is forced to be filled once (due to the MFO constraint)
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Person;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 0;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		@MFO : ConstraintContainer = $MustFillOnce;
+		slot CategoryManager: ComplexEntity.Children;	
+				
+		// "Free" slot to keep extension possibility
+		//------------------------------------------
+		ComplexEntity.Children;	
+		BicycleEntity.AbstractEntity;
+		
+		@Base.AlphaValidation.OpSig	
+		@Base.AlphaValidation.T			
+		@Base.AlphaValidation.C				
+		slot AlphaValidation : BicycleEntity.AlphaValidation = $BicycleAlpha;	
+		
+		// Operations
+		//------------------------------------------
+			 
+		// CheckPhysical
+		//------------
+		@BicycleEntity.CheckPhysical.C
+		@BicycleEntity.CheckPhysical.T
+		@BicycleEntity.CheckPhysical.OpSig
+		slot CheckPhysical : Configuration.CheckPhysical =
+			operation Bool ID::CheckPhysical()
+			{					 					
+				//Note: Components (e.g. wheel, fork, etc.) are not needed to check here, since they are checked as Component in Configuration
+				//Note: A bicycle without a Category Manager can exist as a physical artefact, thus this condition is not mandatory
+				//Note: IsEquippedWithElectricMotor does not influence the validation, since bike with and without motor can also be concrete
+				//Note: SalesPrice slot may be omitted later during instantiation. The important part is to have a value before it is removed
+				if (call $GetRelevantAttributeValueFromMetaHierarchy(this, $Bicycle.SalesPrice)==null) return false;
+				
+				return true;				
+			}
+			
+		//Note: The check whether the given entity is suitable for a given condition could be easily turned into a(n alpha) validation formula, 
+		// 		but we created a queryable method instead used as information source not as a hard validation criteria	
+		@OpSig : ConstraintContainer = $IsSuitableForMethodSignature;
+			@T: ComplexEntity.Children.T =
+				T : ComplexEntity.Children.T.T {
+					Type.IsOverwritable;
+					Type.IsPermanent;
+					
+					slot T: ComplexEntity.Children.T.T.T = $Operations.OperationDefinition;
+					slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+				};
+			@C: ComplexEntity.Children.C =				
+			Card : ComplexEntity.Children.C.Card {
+				Cardinality.IsOverwritable;
+				Cardinality.IsPermanent;	
+				slot Min : ComplexEntity.Children.C.Card.Min = 0; 
+				slot Max : ComplexEntity.Children.C.Card.Max = 1;
+			};
+			slot IsSuitable : ComplexEntity.Children = 
+			operation Bool ID::IsSuitable(ID suitableFor)
+			{					 				 
+				return true;				
+			}
+
+		// Sales price calculations
+		//--------------------------
+			@OpSig : ConstraintContainer = $PriceCalculationMethodSignature;
+			@T: ComplexEntity.Children.T =
+				T : ComplexEntity.Children.T.T {
+					Type.IsOverwritable;
+					Type.IsPermanent;
+					
+					slot T: ComplexEntity.Children.T.T.T = $Operations.OperationDefinition;
+					slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+				};
+			@C: ComplexEntity.Children.C =				
+			Card : ComplexEntity.Children.C.Card {
+				Cardinality.IsOverwritable;
+				Cardinality.IsPermanent;	
+				slot Min : ComplexEntity.Children.C.Card.Min = 0;
+				slot Max : ComplexEntity.Children.C.Card.Max = 1;
+			};
+			slot GetAvarageRegularSalesPrice : ComplexEntity.Children = $GetAvarageRegularSalesPriceMethod;
+						
+			@OpSig : ConstraintContainer = $PriceCalculationMethodSignature;
+			@T: ComplexEntity.Children.T =
+				T : ComplexEntity.Children.T.T {
+					Type.IsOverwritable;
+					Type.IsPermanent;
+					
+					slot T: ComplexEntity.Children.T.T.T = $Operations.OperationDefinition;
+					slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+				};
+			@C: ComplexEntity.Children.C =				
+			Card : ComplexEntity.Children.C.Card {
+				Cardinality.IsOverwritable;
+				Cardinality.IsPermanent;	
+				slot Min : ComplexEntity.Children.C.Card.Min = 0;
+				slot Max : ComplexEntity.Children.C.Card.Max = 1;
+			};
+			slot GetAvarageCurrentSalesPrice : ComplexEntity.Children = $GetAvarageActualSalesPriceMethod;
+						
+			@OpSig : ConstraintContainer = $PriceCalculationMethodSignature;
+			@T: ComplexEntity.Children.T =
+				T : ComplexEntity.Children.T.T {
+					Type.IsOverwritable;
+					Type.IsPermanent;
+					
+					slot T: ComplexEntity.Children.T.T.T = $Operations.OperationDefinition;
+					slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+				};
+			@C: ComplexEntity.Children.C =				
+			Card : ComplexEntity.Children.C.Card {
+				Cardinality.IsOverwritable;
+				Cardinality.IsPermanent;	
+				slot Min : ComplexEntity.Children.C.Card.Min = 0;
+				slot Max : ComplexEntity.Children.C.Card.Max = 1;
+			};
+			slot GetRevenue : ComplexEntity.Children = $GetRevenueMethod;			
+	}
+	
+	ClassicBike: Bicycle
+	{
+		//3a  A bicycle is built of components like ...two wheels... Front wheel and rear wheel 
+		@Bicycle.Wheel.T
+		@C: Bicycle.Wheel.C =				
+		Card : Bicycle.Wheel.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : Bicycle.Wheel.C.Card.Min = 1;
+			slot Max : Bicycle.Wheel.C.Card.Max = 1;
+		};
+		slot FrontWheel: Bicycle.Wheel;
+		
+		@Bicycle.Wheel.T
+		@C: Bicycle.Wheel.C =				
+		Card : Bicycle.Wheel.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : Bicycle.Wheel.C.Card.Min = 1;
+			slot Max : Bicycle.Wheel.C.Card.Max = 1;
+		};
+		slot RearWheel: Bicycle.Wheel;
+		
+		//Note: A classic bicycle has exactly one seat 
+		@Bicycle.Seat.T
+		@C: Bicycle.Seat.C =				
+		Card : Bicycle.Seat.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : Bicycle.Seat.C.Card.Min = 1;
+			slot Max : Bicycle.Seat.C.Card.Max = 1;
+		};
+		slot Seat: Bicycle.Seat;
+		
+		Bicycle.Fork;
+		Bicycle.Frame;
+		Bicycle.OtherComponents;
+		
+		Bicycle.CategoryManager;
+		Bicycle.SalesPrice;	
+		BicycleEntity.AbstractEntity;
+		Bicycle.CheckPhysical;
+				
+		ComplexEntity.Children;		
+		
+		Bicycle.IsSuitable;
+
+		//3b  Front wheel and rear wheel must have the same size.
+		//		This constraint is encoded in the Alpha formula (this is the right place, since "front" and "rear" is available here 
+		@Base.AlphaValidation.OpSig	
+		@Base.AlphaValidation.T			
+		@Base.AlphaValidation.C				
+		slot AlphaValidation : Bicycle.AlphaValidation = $ClassicBikeAlpha;
+	}
+	
+	TandemBike: Bicycle
+	{
+			@Bicycle.Wheel.T
+		@C: Bicycle.Wheel.C =				
+		Card : Bicycle.Wheel.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : Bicycle.Wheel.C.Card.Min = 1;
+			slot Max : Bicycle.Wheel.C.Card.Max = 1;
+		};
+		slot FrontWheel: Bicycle.Wheel;
+		
+		@Bicycle.Wheel.T
+		@C: Bicycle.Wheel.C =				
+		Card : Bicycle.Wheel.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : Bicycle.Wheel.C.Card.Min = 1;
+			slot Max : Bicycle.Wheel.C.Card.Max = 1;
+		};
+		slot RearWheel: Bicycle.Wheel;
+		
+		@Bicycle.Seat.T
+		@C: Bicycle.Seat.C =				
+		Card : Bicycle.Seat.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : Bicycle.Seat.C.Card.Min = 2;
+			slot Max : Bicycle.Seat.C.Card.Max = 2;
+		};
+		slot Seat: Bicycle.Seat;
+		
+		Bicycle.Fork;
+		Bicycle.Frame;
+		Bicycle.OtherComponents;
+		
+		Bicycle.CategoryManager;
+		Bicycle.SalesPrice;	
+		BicycleEntity.AbstractEntity;
+		
+		ComplexEntity.Children;					
+	}
+	
+	UniCycle: Bicycle
+	{
+		@Bicycle.Wheel.T
+		@C: Bicycle.Wheel.C =				
+		Card : Bicycle.Wheel.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : Bicycle.Wheel.C.Card.Min = 1;
+			slot Max : Bicycle.Wheel.C.Card.Max = 1;
+		};
+		slot Wheel: Bicycle.Wheel;
+		
+		@Bicycle.Seat.T
+		@C: Bicycle.Seat.C =				
+		Card : Bicycle.Seat.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : Bicycle.Seat.C.Card.Min = 1;
+			slot Max : Bicycle.Seat.C.Card.Max = 1;
+		};
+		slot Seat: Bicycle.Seat;
+		
+		Bicycle.Fork;
+		Bicycle.Frame;
+		Bicycle.OtherComponents;
+		
+		Bicycle.CategoryManager;
+		Bicycle.SalesPrice;	
+		BicycleEntity.AbstractEntity;
+		
+		ComplexEntity.Children;			
+	}
+		
+	Tricycle: Bicycle
+	{
+		@Bicycle.Wheel.T
+		@C: Bicycle.Wheel.C =				
+		Card : Bicycle.Wheel.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : Bicycle.Wheel.C.Card.Min = 3;
+			slot Max : Bicycle.Wheel.C.Card.Max = 3;
+		};
+		slot Wheel: Bicycle.Wheel;
+		
+		@Bicycle.Seat.T
+		@C: Bicycle.Seat.C =				
+		Card : Bicycle.Seat.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : Bicycle.Seat.C.Card.Min = 1;
+			slot Max : Bicycle.Seat.C.Card.Max = 1;
+		};
+		slot Seat: Bicycle.Seat;
+		
+		Bicycle.Fork;
+		Bicycle.Frame;
+		Bicycle.OtherComponents;
+		
+		Bicycle.CategoryManager;
+		Bicycle.SalesPrice;	
+		BicycleEntity.AbstractEntity;
+		
+		ComplexEntity.Children;	
+	}
+	
+	/*
+	 *  
+	 * 											Bicycle models
+	 * 										------------------------
+	 */
+
+	//4a  There are different categories of bicycles, such as mountain bike, city bike, or racing bike
+	RaceBike: ClassicBike
+	{
+		ClassicBike.FrontWheel;
+		ClassicBike.RearWheel;
+		ClassicBike.Seat;
+		
+		//5.4 A racing bike has a racing fork and racing frame. 
+		@T: Bicycle.Frame.T =
+		Type : Bicycle.Frame.T.Type 
+		{					
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			@Type.Type.C
+			@ComplexEntity.Children.T
+			slot Type : Bicycle.Frame.T.Type.Type = $RacingFrameComponent;
+			
+			Configuration.Components.T.Type.IsInclusive;
+		};		
+		@Bicycle.Frame.C
+		slot Frame: Bicycle.Frame;
+		
+		//5.4 A racing bike has a racing fork and racing frame. 
+		@T: Bicycle.Fork.T =
+		Type : Bicycle.Fork.T.Type 
+		{					
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			@Type.Type.C
+			@ComplexEntity.Children.T
+			slot Type : Bicycle.Fork.T.Type.Type = $RacingForkComponent;
+			
+			Configuration.Components.T.Type.IsInclusive;
+		};		
+		@Bicycle.Fork.C
+		slot Fork: Bicycle.Fork;
+		
+		Bicycle.SalesPrice;	
+		BicycleEntity.AbstractEntity;
+			
+		//6b Peter Parker is category manager for the racing bike category.
+		//Note: We have to add Type and Card constraints to the slot, thus, the slot will be optional on the next level
+		@Bicycle.CategoryManager.T
+		@Bicycle.CategoryManager.C
+		slot CategoryManager: Bicycle.CategoryManager= $PeterParker;
+		
+		//5.8 A racing bike can be certified by the Union Cycliste Internationale (UCI). 
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Bool;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot CertifiedByUCI: ComplexEntity.Children;
+		
+		@Base.AlphaValidation.OpSig	
+		@Base.AlphaValidation.T			
+		@Base.AlphaValidation.C				
+		slot AlphaValidation : ClassicBike.AlphaValidation = 
+			operation Bool ID::RaceBikeAlpha(ID instance){
+			
+			//5.1a   Every category of bicycle _except_ for racing bikes may be equipped with an electric motor 
+			Bool hasElectricMotor = call $GetRelevantAttributeValue(instance, $Bicycle.IsEquippedWIthElectricMotor);
+			return (hasElectricMotor==null || !hasElectricMotor);
+		}
+						
+		@BicycleEntity.CheckPhysical.C
+		@BicycleEntity.CheckPhysical.T
+		@BicycleEntity.CheckPhysical.OpSig
+		slot CheckPhysical : Bicycle.CheckPhysical =
+			operation Bool ID::CheckPhysical()
+			{					 				 
+				if (call $GetRelevantAttributeValueFromMetaHierarchy(this, $RaceBike.CertifiedByUCI)==null) return false;
+				return true;				
+			}	
+			
+		//4b  A racing bike is not suited for tough terrain. A racing bike is suited for races. It can be used in cities, too.
+		//Note:	We do not state the later part explicitly. It is accepted, since it is not forbidden.	 
+		//Note: This condition could be easily turned into a validation formula, but we created a queryable method instead useful as information source not as
+		//		a hard validation criteria
+		@Bicycle.IsSuitable.OpSig	
+		@Bicycle.IsSuitable.T			
+		@Bicycle.IsSuitable.C				
+		slot IsSuitable : Bicycle.IsSuitable =
+			operation Bool ID::IsSuitableFor_Race(ID checkCondition){
+				if (checkCondition == $SuitableFor_ToughTerrain) 
+					return false;
+				else 
+					return true;	
+			}		
+				
+	}
+	
+	//4a There are different categories of bicycles, such as mountain bike, city bike, or racing bike
+	MountainBike: ClassicBike
+	{		
+		ClassicBike.FrontWheel;
+		ClassicBike.RearWheel;
+		Bicycle.Fork;
+		ClassicBike.Seat;
+		Bicycle.Frame;
+		
+		Bicycle.CategoryManager;
+		Bicycle.SalesPrice;		
+		BicycleEntity.AbstractEntity;
+		
+		//5.2 A mountain bike or a city bike may have a suspension. 
+		@T: Bicycle.OtherComponents.T =
+		Type : Bicycle.OtherComponents.T.Type
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			@Type.Type.C
+			@ComplexEntity.Children.T
+			slot Type: Bicycle.OtherComponents.T.Type.Type  = $SuspensionComponent;
+			
+			Configuration.Components.T.Type.IsInclusive;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			
+			slot Min : ComplexEntity.Children.C.Card.Min = 0;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot Suspension: Bicycle.OtherComponents;
+			
+		//5.3 A mountain bike or a city bike may have a suspension. 	
+		@T: Bicycle.OtherComponents.T =
+		Type : Bicycle.OtherComponents.T.Type
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			@Type.Type.C
+			@ComplexEntity.Children.T
+			slot Type: Bicycle.OtherComponents.T.Type.Type  = $SuspensionComponent;
+			
+			Configuration.Components.T.Type.IsInclusive;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			
+			slot Min : ComplexEntity.Children.C.Card.Min = 0;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot RearSuspension: Bicycle.OtherComponents;
+		
+		//Note: There is no need to overwrite the CheckPhysical method, since suspension components are instantiated from Configuration.Components, 
+		// 	which is already checked
+	}
+
+	//4a  There are different categories of bicycles, such as mountain bike, city bike, or racing bike
+	CityBike: ClassicBike
+	{
+		ClassicBike.FrontWheel;
+		ClassicBike.RearWheel;
+		Bicycle.Fork;
+		ClassicBike.Seat;
+		Bicycle.Frame;
+		
+		Bicycle.CategoryManager;
+		Bicycle.SalesPrice;
+		BicycleEntity.AbstractEntity;	
+				
+		//5.2 A mountain bike or a city bike may have a suspension. 
+		@T: Bicycle.OtherComponents.T =
+		Type : Bicycle.OtherComponents.T.Type
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			@Type.Type.C
+			@ComplexEntity.Children.T
+			slot Type: Bicycle.OtherComponents.T.Type.Type  = $SuspensionComponent;
+			
+			Configuration.Components.T.Type.IsInclusive;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			
+			slot Min : ComplexEntity.Children.C.Card.Min = 0;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot Suspension: Bicycle.OtherComponents;
+		
+		//5.3 A mountain bike may have a rear suspension. That is not the case for city bikes. 
+		//Note:	We do not need to model the second part. It is enforced automatically since city bikes do not have such a slot
+	}		
+
+	//5.9a  A professional racing bike is a racing bike...
+	ProRaceBike: RaceBike
+	{		
+		ClassicBike.FrontWheel;
+		ClassicBike.RearWheel;
+		RaceBike.Fork;
+		ClassicBike.Seat;
+		
+		@T: RaceBike.Frame.T =
+		Type : RaceBike.Frame.T.Type 
+		{					
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			@Type.Type.C
+			@ComplexEntity.Children.T
+			slot Type : RaceBike.Frame.T.Type.Type = $ProRaceFrameComponent;
+			
+			Configuration.Components.T.Type.IsInclusive;
+		};		
+		@Bicycle.Frame.C
+		slot Frame: RaceBike.Frame;
+				
+		Bicycle.SalesPrice;
+		
+		//5.9a  ... and certified by the UCI.
+		//Note: Instead of adding a validation formula here, we explicitly set the value of the slot and thus force its value to stay "true" 
+		slot CertifiedByUCI: RaceBike.CertifiedByUCI = true;
+		
+		RaceBike.IsSuitable;
+		BicycleEntity.AbstractEntity;
+	}
+	
+	//7a Challenger A2-XL is a professional racing bike model...	
+	ChallengerA2XL: ProRaceBike
+	{	
+		ClassicBike.FrontWheel;
+		ClassicBike.RearWheel;
+		RaceBike.Fork;
+		ClassicBike.Seat;
+		
+		//7b A Challenger A2-XL bike is equipped with a Rocket-A1-XL which is a professional race frame.
+		@T: ProRaceBike.Frame.T =
+		Type : ProRaceBike.Frame.T.Type
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			@Type.Type.C
+			@ComplexEntity.Children.T
+			slot Type: ProRaceBike.Frame.T.Type.Type  = $RocketA1XL;
+			
+			Configuration.Components.T.Type.IsInclusive;
+		};		
+		@Bicycle.Frame.C
+		slot Frame: ProRaceBike.Frame;
+				
+		//10b The regular sales price of Challenger A2-XL is EUR 4999.00.
+		@Bicycle.SalesPrice.T
+		@Bicycle.SalesPrice.C
+		slot SalesPrice: Bicycle.SalesPrice = 4999;	
+		
+		ProRaceBike.CertifiedByUCI;
+		
+		@Bicycle.IsSuitable.OpSig	
+		@Bicycle.IsSuitable.T			
+		@Bicycle.IsSuitable.C				
+		slot IsSuitable : RaceBike.IsSuitable = $IsSuitableFor_A2XL;
+		
+		BicycleEntity.AbstractEntity;
+	}
+	
+	
+	/*
+	 *  
+	 * 											Enumerations
+	 * 										---------------------
+	 */
+	BicycleEnum: BicycleEntity
+	{
+		@BicycleEntity.CheckPhysical.C
+		@BicycleEntity.CheckPhysical.T
+		@BicycleEntity.CheckPhysical.OpSig
+		slot CheckPhysical : BicycleEntity.CheckPhysical =
+			operation Bool ID::IsEnumPhysical()
+			{
+					return true;
+			}		
+	}
+	 
+	SuitablePurposes: BicycleEnum	{}
+	SuitableFor_ToughTerrain: SuitablePurposes{}
+	SuitableFor_Race : SuitablePurposes{}
+	SuitableFor_City: SuitablePurposes{}
+	SuitableFor_TallCyclist: SuitablePurposes{}
+	SuitableFor_ShortCyclist: SuitablePurposes{}
+	
+	BicycleMaterial: BicycleEnum	{}
+	Material_Steel: BicycleMaterial{}
+	Material_Aluminium: BicycleMaterial{}
+	Material_Carbon: BicycleMaterial{}
+	Material_Plastic: BicycleMaterial{}
+	
+	
+	/*
+	 *  
+	 * 										 Validation formulae
+	 * 										---------------------
+	 */
+
+	operation Bool ID::BicycleAlpha(ID instance){
+		
+		//5.1b   Electric bikes need enforced brakes and a battery.
+		//Note: Enforced brake and battery is modeled as additional (other) components 
+		Bool hasElectricMotor = call $GetRelevantAttributeValue(instance, $Bicycle.IsEquippedWIthElectricMotor);
+		if (hasElectricMotor!=null && hasElectricMotor)
+		{
+			Bool hasEnforcedBrake = false;
+			Bool hasBattery = false;
+			
+			//We get all additional components and check their meta 
+			ID[] components= call $GetRelevantAttributeValues(instance, $Bicycle.OtherComponents);			
+			for(ID currentComp : components)
+			{
+				if (call $DerivesFromOrEquals($EnforcedBrakeComponent, currentComp)) hasEnforcedBrake = true;
+				if (call $DerivesFromOrEquals($BatteryComponent, currentComp)) hasBattery = true;
+			}		
+			if (!hasElectricMotor||!hasBattery) return false;
+		}				
+		
+	
+		//5.10 A carbon frame allows for carbon wheels or aluminum wheels only.
+		//Note: Validation also works with unicycles and tricyles
+		ID frame = call $GetRelevantAttributeValue(instance, $Bicycle.Frame);
+		ID[] wheels= call $GetRelevantAttributeValues(instance, $Bicycle.Wheel);
+		
+		if (frame == null || wheels ==null) return true;
+		Object frameMaterial = call $GetRelevantAttributeValue(frame, $BicycleComponent.Material);
+		if (frameMaterial == null || frameMaterial!= $Material_Carbon ) return true;
+		
+		for(ID currentWheel : wheels)
+		{
+			ID wheelMaterial = call $GetRelevantAttributeValue(currentWheel, $BicycleComponent.Material);
+			if (wheelMaterial!=$Material_Carbon&& wheelMaterial!=$Material_Aluminium) return false;
+		}		
+				
+		return true;	
+	}
+	
+	//3b Front wheel and rear wheel must have the same size. 
+	operation Bool ID::ClassicBikeAlpha(ID instance){
+		//We obtain the wheels from their slots
+		Object wheel1= call $GetRelevantAttributeValue(instance, $ClassicBike.FrontWheel);
+		Object wheel2= call $GetRelevantAttributeValue(instance, $ClassicBike.RearWheel);
+		
+		// If either slot is null the entity is not finished (the wheel is not set yet)
+		// We accept unfinished bicycles as they are only temporarily used 
+		if(wheel1==null || wheel2 == null) return true;
+		
+		return 	call $GetRelevantAttributeValue(wheel1, $Component.Size) == 
+				call $GetRelevantAttributeValue(wheel2, $Component.Size);
+	}
+	
+	//5.9b  ... has a professional race frame which is made of aluminum or carbon and has a minimum weight of 5200 gr.
+	//Note: Minimum was set to maximum, otherwise there is a contradicting validation criteria
+	operation Bool ID::ProRaceFrameAlpha(ID instance){
+		
+		ID material = call $GetRelevantAttributeValue(instance, $BicycleComponent.Material);
+		if (material!=null 	&& material!=$Material_Carbon 
+							&& material!=$Material_Aluminium) return false;
+		
+		Number weight= call $GetRelevantAttributeValue(instance, $Component.Weight);
+		if (weight!=null&& weight>5200) return false;	
+		
+		return true;	
+	}
+	
+	/*
+	 *  
+	 * 										 Additional operations
+	 * 										-----------------------
+	 */
+	
+	//7a Challenger A2-XL is a professional racing bike model for tall cyclists
+	operation Bool ID::IsSuitableFor_A2XL(ID checkCondition){
+		
+		//Not meant for short cyclists
+		if (checkCondition == $SuitableFor_ShortCyclist) return false;
+		
+		//We also need to check other conditions (unlike in alpha validation, where base formulae are automatically validated)
+		if (!call this::$BicycleDomain.RaceBike.IsSuitable(checkCondition)) return false;
+
+		return true;	
+	}
+			
+	IsSuitableForMethodSignature : Operations.OperationSignature {
+		
+		Operations.OperationSignature.IsOverwritable;
+		Operations.OperationSignature.IsPermanent;
+	
+		slot ReturnType : Operations.OperationSignature.ReturnType =
+		RetType : Operations.VariableType {
+			slot PrimType : Operations.VariableType.PrimitiveType = $Bool;
+			slot Dim : Operations.VariableType.Dimension = 0;
+		};
+	
+		slot ContextType : Operations.OperationSignature.ContextType =
+		ContextType : Operations.VariableType {
+			slot IsObj : Operations.VariableType.IsID = true;
+			slot Dim : Operations.VariableType.Dimension = 0;
+		};
+		
+		slot checkAgainst : Operations.OperationSignature.Parameters =
+		Type : Operations.VariableType{
+			slot Type : Operations.VariableType.IsID=true;
+			slot Dim : Operations.VariableType.Dimension=0;
+		};
+	}
+		
+	CheckPhysicalMethodSignature : Operations.OperationSignature {
+		
+		Operations.OperationSignature.IsOverwritable;
+		Operations.OperationSignature.IsPermanent;
+	
+		slot ReturnType : Operations.OperationSignature.ReturnType =
+		RetType : Operations.VariableType {
+			slot PrimType : Operations.VariableType.PrimitiveType = $Bool;
+			slot Dim : Operations.VariableType.Dimension = 0;
+		};
+	
+		slot ContextType : Operations.OperationSignature.ContextType =
+		ContextType : Operations.VariableType {
+			slot IsObj : Operations.VariableType.IsID = true;
+			slot Dim : Operations.VariableType.Dimension = 0;
+		};
+	}
+	
+		operation Bool CallCheckPhysicalOnMetaHierarchy(ID searchRoot, ID instance) {  			
+			
+			Object method = call $GetRelevantAttributeValue(instance, $BicycleEntity.CheckPhysical);
+			if(method!=null && !call searchRoot::method())
+			{
+				return false;
+			}
+			
+			ID meta = call $Meta(instance);		
+			
+			//We are done, all methods are already called	
+			if(meta== $BicycleEntity) return true;
+			
+			return call $CallCheckPhysicalOnMetaHierarchy(searchRoot, meta);
+		}
+	
+	/*
+	 *  
+	 * 										 Price calculations
+	 * 										---------------------
+	 */
+	
+	PriceCalculationMethodSignature : Operations.OperationSignature {
+		
+		Operations.OperationSignature.IsOverwritable;
+		Operations.OperationSignature.IsPermanent;
+	
+		slot ReturnType : Operations.OperationSignature.ReturnType =
+		RetType : Operations.VariableType {
+			slot PrimType : Operations.VariableType.PrimitiveType = $Number;
+			slot Dim : Operations.VariableType.Dimension = 0;
+		};
+	
+		slot ContextType : Operations.OperationSignature.ContextType =
+		ContextType : Operations.VariableType {
+			slot IsObj : Operations.VariableType.IsID = true;
+			slot Dim : Operations.VariableType.Dimension = 0;
+		};
+	}
+	
+	operation Number ID::GetAvarageActualSalesPriceMethod()
+	{	
+				//Get all instances of the current element and calculate their sales price
+				//Can be used easily for certain bike models, or categories (i.e. model-types e.g. mountain bike) due to the instantiation chain
+				//Only concrete (physical) instances are taken into account
+				Number sum = 0;
+				Number cnt = 0;
+				
+				ID[] entities = call $GetEntities();
+				for(ID entity : entities)
+				{
+					//We are looking for selling transactions
+					if(call $DerivesFrom($SellingAct, entity))
+					{				
+						//Only non-abstract selling acts are counted												
+						if (call $GetRelevantAttributeValue(entity, $BicycleEntity.AbstractEntity)==null)
+						{
+							//We could add further filtering properties here (e.g. date)
+							
+							//We get the bike from the transaction and compare it with the current category/model
+							//Note: The bicycle cannot be null or non-abstract here, since the selling act is non-abstract
+							Object bicycle = call $GetRelevantAttributeValue(entity, $SellingAct.SoldBicycle);
+							if(call $DerivesFrom(this, bicycle))
+							{
+								cnt = cnt + 1 ;
+								
+								//Note: The price cannot be null or non-abstract here, since the selling act is non-abstract
+								sum = sum + call $GetRelevantAttributeValue(entity, $SellingAct.SellingPrice);
+							}						
+						}
+					}					
+				}
+				if (cnt > 0)
+					return sum/cnt;
+				else
+					return 0;				
+			}
+		
+	operation Number ID::GetAvarageRegularSalesPriceMethod()
+	{	
+				//Get all instances of the current element and calculate their sales price
+				//Can be used easily for certain bike models, or categories (i.e. model-types e.g. mountain bike) due to the instantiation chain
+				//Only concrete (physical) instances are taken into account
+				Number sum = 0;
+				Number cnt = 0;
+				
+				ID[] entities = call $GetEntities();
+				for(ID entity : entities)
+				{
+					//We are looking for selling transactions
+					if(call $DerivesFrom($SellingAct, entity))
+					{				
+						//Only non-abstract selling acts are counted												
+						if (call $GetRelevantAttributeValue(entity, $BicycleEntity.AbstractEntity)==null)
+						{
+							//We could add further filtering properties here (e.g. date)
+							
+							//We get the bike from the transaction and compare it with the current category/model
+							//Note: The bicycle cannot be null or non-abstract here, since the selling act is non-abstract
+							Object bicycle = call $GetRelevantAttributeValue(entity, $SellingAct.SoldBicycle);
+							if(call $DerivesFrom(this, bicycle))
+							{
+								cnt = cnt + 1 ;
+								
+								//Note: The price is not always set in the entity, it may be set in one of its descendants, that's why we need
+								// 		to traverse through the hierarchy  
+								sum = sum + call $GetRelevantAttributeValueFromMetaHierarchy(bicycle, $Bicycle.SalesPrice);
+							}
+						}
+					}					
+				}
+				if (cnt > 0)
+					return sum/cnt;
+				else
+					return 0;							
+	}
+				
+	operation Number ID::GetRevenueMethod()
+	{
+				//Get all instances of the current element and calculate their sales price
+				//Can be used easily for certain bike models, or categories (i.e. model-types e.g. mountain bike) due to the instantiation chain
+				//Only concrete (physical) instances are taken into account
+				Number sum = 0;
+				
+				ID[] entities = call $GetEntities();
+				for(ID entity : entities)
+				{
+					//We are looking for selling transactions
+					if(call $DerivesFrom($SellingAct, entity))
+					{				
+						//Only non-abstract selling acts are counted												
+						if (call $GetRelevantAttributeValue(entity, $BicycleEntity.AbstractEntity)==null)
+						{
+							//We could add further filtering properties here (e.g. date)
+							
+							//We get the bike from the transaction and compare it with the current category/model
+							//Note: The bicycle cannot be null or non-abstract here, since the selling act is non-abstract
+							Object bicycle = call $GetRelevantAttributeValue(entity, $SellingAct.SoldBicycle);
+							if(call $DerivesFrom(this, bicycle))
+							{
+								//Note: The price cannot be null or non-abstract here, since the selling act is non-abstract
+								sum = sum + call $GetRelevantAttributeValue(entity, $SellingAct.SellingPrice);
+							}						
+						}
+					}					
+				}
+				
+				return sum;				
+		}
+	
+	/*
+	 *  
+	 * 											Sales
+	 * 										-------------
+	 */
+	 
+	//9a Bicycles are sold to customers. A customer is a natural person or an organization. 
+	Customer: BicycleEntity 
+	{
+		@BicycleEntity.CheckPhysical.C
+		@BicycleEntity.CheckPhysical.T
+		@BicycleEntity.CheckPhysical.OpSig
+		slot CheckPhysical : BicycleEntity.CheckPhysical =
+			operation Bool ID::IsCustomerPhysical()
+			{
+					return true;
+			}
+			
+		BicycleEntity.AbstractEntity;
+	}	
+	
+	Organization: Customer {BicycleEntity.AbstractEntity;}
+	Person: Customer {BicycleEntity.AbstractEntity;}
+	 
+	 //9c An invoice is a read-only business document.
+	 BusinessDocument: BicycleEntity
+	 {
+	 	@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Bool;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 0;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot IsReadOnly: ComplexEntity.Children;
+		
+		BicycleEntity.AbstractEntity;
+		
+		@BicycleEntity.CheckPhysical.C
+		@BicycleEntity.CheckPhysical.T
+		@BicycleEntity.CheckPhysical.OpSig
+		slot CheckPhysical : BicycleEntity.CheckPhysical =
+			operation Bool ID::CheckPhysical()
+			{
+				if(call $GetRelevantAttributeValueFromMetaHierarchy(this, $BusinessDocument.IsReadOnly) == null) return false;
+				return true;
+			}
+	 }
+	 
+	 //9b  The act of selling a bicycle requires the creation of an invoice. 
+	 InvoiceEntity: BusinessDocument
+	 {
+	 	BicycleEntity.AbstractEntity;
+	 	
+	 	@BusinessDocument.IsReadOnly.T
+	 	@BusinessDocument.IsReadOnly.C
+	 	slot IsReadOnly: BusinessDocument.IsReadOnly = true;
+	 }
+	
+	 DateTime: BicycleEntity
+	 {
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Number;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot Year: ComplexEntity.Children;
+		
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Number;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	   
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot Month: ComplexEntity.Children;
+		
+		
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Number;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot Day: ComplexEntity.Children;
+		
+		BicycleEntity.AbstractEntity;
+		
+		@BicycleEntity.CheckPhysical.C
+		@BicycleEntity.CheckPhysical.T
+		@BicycleEntity.CheckPhysical.OpSig
+		slot CheckPhysical : BicycleEntity.CheckPhysical =
+			operation Bool ID::CheckPhysical()
+			{
+				if(call $GetRelevantAttributeValue(this, $DateTime.Year) == null) return false;
+				if(call $GetRelevantAttributeValue(this, $DateTime.Month) == null) return false;
+				if(call $GetRelevantAttributeValue(this, $DateTime.Day) == null) return false;
+				return true;
+			}
+	}
+	
+	//11	Bike#134123 was sold on September 19th, 2017 for EUR 4299.00 to customer Susan Storm.
+	//		-> a selling act has a bike, a date, a price and a person (besides the invoice also to be referred)
+	SellingAct: BicycleEntity
+	{		
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $InvoiceEntity;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot Invoice: ComplexEntity.Children;
+		
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $DateTime;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot SellDate: ComplexEntity.Children;
+		
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Number;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot SellingPrice: ComplexEntity.Children;
+		
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Bicycle;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot SoldBicycle: ComplexEntity.Children;	
+		
+		@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T 
+		{		
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			slot Type : ComplexEntity.Children.T.T.T = $Customer;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};		
+		@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		slot SoldTo: ComplexEntity.Children;	
+		
+		BicycleEntity.AbstractEntity;
+		
+		@Base.AlphaValidation.OpSig	
+		@Base.AlphaValidation.T			
+		@Base.AlphaValidation.C				
+		slot AlphaValidation : BicycleEntity.AlphaValidation = $SellingActAlpha;
+		
+		@BicycleEntity.CheckPhysical.C
+		@BicycleEntity.CheckPhysical.T
+		@BicycleEntity.CheckPhysical.OpSig
+		slot CheckPhysical : BicycleEntity.CheckPhysical =
+			operation Bool ID::IsSellingActPhysical()
+			{	
+				if(call $GetRelevantAttributeValue(this, $SellingAct.SellingPrice) == null) return false;
+							
+				ID date= call $GetRelevantAttributeValue(this, $SellingAct.SellDate);
+				if (date==null|| call $GetRelevantAttribute(date, $BicycleEntity.AbstractEntity)!=null) return false;
+				
+				ID soldTo= call $GetRelevantAttributeValue(this, $SellingAct.SoldTo);
+				if (soldTo==null|| call $GetRelevantAttribute(soldTo, $BicycleEntity.AbstractEntity)!=null) return false;
+
+				ID invoice= call $GetRelevantAttributeValue(this, $SellingAct.Invoice);
+				if (invoice==null|| call $GetRelevantAttribute(invoice, $BicycleEntity.AbstractEntity)!=null) return false;
+			
+				ID bike= call $GetRelevantAttributeValue(this, $SellingAct.SoldBicycle);
+				if (bike==null|| call $GetRelevantAttribute(bike, $BicycleEntity.AbstractEntity)!=null) return false;
+			
+				return true;
+			}
+	}
+	
+	operation Bool ID::SellingActAlpha(ID instance){
+		//10c  The actual sales price of physical instances of the bicycle model, i.e., the price given in an invoice, may be lower. 						
+		//Note: We check whether the price is not higher, than the regular price
+		//Note: We allow selling acts which refer to partially concrete entities, thus checking for null is mandatory
+		ID bicycle = call $GetRelevantAttributeValue(instance, $SellingAct.SoldBicycle);
+		Number price = call $GetRelevantAttributeValue(instance, $SellingAct.SellingPrice);
+				
+		if (bicycle!=null&& price!=null)
+		{
+			Number regularPrice = call $GetRelevantAttributeValueFromMetaHierarchy(bicycle, $Bicycle.SalesPrice);
+			if (regularPrice!=null && regularPrice< price) return false;
+		} 
+										
+		return true;
+  	}
+  	
+  		
+	/*
+	 *  
+	 * 											 Examples
+	 * 										---------------------
+	 */
+	 
+	 
+	//8a  Bike#134123, a physical instance of Challenger A2-XL
+	Bike134123: ChallengerA2XL
+	{
+		//In order to create a physical bike, we need to have physical components for it
+		slot FrontWheel: ClassicBike.FrontWheel = $Wheel1222;
+		slot RearWheel: ClassicBike.RearWheel = $Wheel1223;
+		slot Fork: RaceBike.Fork = $Fork1224;
+		slot Seat: ClassicBike.Seat = $Seat1225;
+				
+		slot Frame: ChallengerA2XL.Frame = $Frame134123;
+		
+		//UCI certification is set by the meta
+		ProRaceBike.CertifiedByUCI;	
+	}
+	
+	
+	//8b ... has Frame#134123, a physical instance of Rocket-A1-XL with serial number s134123, as component. 
+	Frame134123: RocketA1XL
+	{		
+		//We have to set all slots to concrete values in order to have a physical artefact		
+		slot Size: Component.Size = 25;	
+		slot Colour: Component.Colour = "Red";
+				
+		slot SerialNumber: Component.SerialNumber= "s134123";
+		
+		slot TTLength: RacingFrameComponent.TopTubeLength = 100;
+		slot DTLenth: RacingFrameComponent.DownTubeLength = 80;
+		slot StLength: RacingFrameComponent.SeatTubeLength = 10;
+		slot Material: BicycleComponent.Material = $Material_Carbon;
+		
+		//Weight is set by the model
+		RocketA1XL.Weight;		
+	}
+	
+	Wheel1222: WheelComponent
+	{
+		slot Size: Component.Size = 25;	
+		slot Colour: Component.Colour = "Black";						
+		slot SerialNumber: Component.SerialNumber= "s1341232";			
+		slot Weight: Component.Weight = 10;
+		slot Material: BicycleComponent.Material = $Material_Carbon;
+	}
+	
+	Wheel1223: WheelComponent
+	{
+		slot Size: Component.Size = 25;	
+		slot Colour: Component.Colour = "Black";						
+		slot SerialNumber: Component.SerialNumber= "s1341233";			
+		slot Weight: Component.Weight = 10;
+		slot Material: BicycleComponent.Material = $Material_Aluminium;
+	}
+	
+	Fork1224: RacingForkComponent
+	{
+		slot Size: Component.Size = 25;	
+		slot Colour: Component.Colour = "Black";						
+		slot SerialNumber: Component.SerialNumber= "s1341234";			
+		slot Weight: Component.Weight = 10;
+		slot Material: BicycleComponent.Material = $Material_Aluminium;		
+	}
+	
+	Seat1225: SeatComponent
+	{
+		slot Size: Component.Size = 25;	
+		slot Colour: Component.Colour = "Black";						
+		slot SerialNumber: Component.SerialNumber= "s1341235";			
+		slot Weight: Component.Weight = 10;
+		slot Material: BicycleComponent.Material = $Material_Aluminium;		
+	}
+	
+	 PeterParker : Person {
+	 }
+	    	
+  	//11 Bike#134123 was sold on September 19th, 2017 for EUR 4299.00 to customer Susan Storm.
+ 	TransactionDate: DateTime
+ 	{
+ 		slot Month: DateTime.Month = 9;
+ 		slot Day: DateTime.Day = 19;
+ 		slot Year: DateTime.Year = 2017; 		 		
+ 	}
+ 
+  	SusanStorm: Person
+  	{}
+  	
+  	Invoice_001:InvoiceEntity
+  	{
+  	}
+  	
+  	ExampleTransaction: SellingAct
+  	{
+  		slot SellDate: SellingAct.SellDate= $TransactionDate;
+  		slot SoldTo: SellingAct.SoldTo = $SusanStorm;
+  		slot SellingPrice: SellingAct.SellingPrice = 4299;
+  		slot SoldBike: SellingAct.SoldBicycle = $Bike134123;
+  		slot Invoice: SellingAct.Invoice = $Invoice_001;	
+  	} 
+}
+
+//TODO: Validate (deny) selling the same bike multiple times, re-using the invoice, etc. (--> Ownership)
+//TODO: Add default CheckPhyscal condition: if free ComplexEntity.Children are available, the entity must be abstract
+//TODO: optimize callCheckPhysicalOnHierarchy: current we call the method if it is cloned (e.g. Bicycle.CheckPhysical in ClassicBike)  	

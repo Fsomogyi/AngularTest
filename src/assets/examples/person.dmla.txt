@@ -1,0 +1,142 @@
+package Example {
+
+import Bootstrap.*;
+import Bootstrap.BuiltInOperations.*;
+import Bootstrap.Validation.*;
+import Bootstrap.Validation.Helper.*;
+	
+// Entity representing the name of a person
+ComplexName : ComplexEntity{
+	
+	//===========================================================================
+	// The following is the definition of the first name slot and its constraints
+	@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T {
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			//Type constraint with String
+			slot Type : ComplexEntity.Children.T.T.T = $String;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};
+	@C: ComplexEntity.Children.C =
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;
+			
+			//Cardinality constraint with [1..2]
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 2;
+		};
+	slot FirstName : ComplexEntity.Children; // slot for the first name(s)
+	//===========================================================================
+	
+	//===========================================================================
+	// The following is the definition of the last name slot and its constraints
+	@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T {
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			//Type constraint with String
+			slot Type : ComplexEntity.Children.T.T.T = $String;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};
+	@C: ComplexEntity.Children.C =
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;
+			
+			//Cardinality constraint with [1..1]
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+	slot LastName : ComplexEntity.Children; // slot for the last name
+	//===========================================================================
+}
+
+Person : ComplexEntity {
+	//===========================================================================
+	// The following is the definition of the full name slot and its constraints
+	@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T {
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			//Type constraint with ComplexName
+			slot Type : ComplexEntity.Children.T.T.T = $ComplexName;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};
+	@C: ComplexEntity.Children.C =
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;
+			
+			//Cardinality constraint with [1..1]
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+	slot FullName : ComplexEntity.Children; // slot for the full name
+	//===========================================================================
+	
+	//===========================================================================
+	// The following is the definition of the alpha validation formula slot and its constraints
+	@Base.AlphaValidation.OpSig
+	@Base.AlphaValidation.T
+	@Base.AlphaValidation.C
+	slot AlphaValidation : Base.AlphaValidation = $PersonAlpha;
+	//===========================================================================
+}
+
+/*
+ * Alpha validation of Person. Checks a single meta-instance relation.
+ * The signature's meaning:
+ * 	Bool return type - true if the meta-entity relation is valid
+ * 	ID context type (the type of this) - the ID of the meta entity
+ * 	ID parameter instance - the ID of the instance entity
+ */ 
+operation Bool ID::PersonAlpha(ID instance){
+	// Access the value of the slot containing the name of the person
+	ID fullNameSlot = call $GetRelevantAttribute(instance, $Person.FullName);
+	if(fullNameSlot==null)
+		return true; // If no name is specified yet => valid
+		
+	Object[] fullNameValues = call $Values(fullNameSlot);
+	if(fullNameValues==null || size(fullNameValues) == 0)
+		return true; // If no name is specified yet => valid
+		
+	ID fullName = index<Object>(fullNameValues, 0);
+	if(fullName == null)
+		return false; // FullName is filled with undef => invalid
+		
+	//Access the first name values contained by the ComplexName if(firstNames ==null || size(firstNames)<2)
+	Object[] firstNames = call $GetRelevantAttributeValues(fullName, $ComplexName.FirstName);
+	
+	if(firstNames ==null || size(firstNames)<2)
+		return true; // not specified yet or has less than 2 first names
+	
+	//Ensure the first names do not match
+	return index<Object>( firstNames, 0) != index<Object>( firstNames, 1);
+}
+
+// A valid person instance, Bob Smith
+BobSmith : Person{
+	// The instantiated FullName slot from Person
+	slot FullName : Person.FullName =
+		BobSmithFullName : ComplexName { // A ComplexName instance as the slot's value
+			slot FirstName : ComplexName.FirstName = "Bob";
+			slot LastName : ComplexName.LastName = "Smith";
+		};
+}
+
+// A valid person instance, Bob Rob Smith
+BobRobSmith : Person{
+	// The instantiated FullName slot from Person
+	slot FullName : Person.FullName =
+		BobRobSmithFullName : ComplexName { // A ComplexName instance as the slot's value
+			slot FirstName : ComplexName.FirstName = ["Bob", "Rob"];
+			slot LastName : ComplexName.LastName = "Smith";
+		};
+}
+
+}

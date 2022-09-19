@@ -1,0 +1,1290 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Model>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St7.If.Then.Expr.Return.Value.Expr.Literal.Value" Meta="Bootstrap.Operations.Literal.Value">
+    <Values>
+      <Value Type="Bootstrap.Bool">true</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Value.Expr.OpCall" Meta="Bootstrap.Operations.OperationCall">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Value.Expr.OpCall.OpHandle</Attribute>
+      <Attribute>ID:Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Value.Expr.OpCall.Param0</Attribute>
+      <Attribute>ID:Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Value.Expr.OpCall.Param1</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Left.Expr.Index.Array.VarGetter" Meta="Bootstrap.Operations.VarGetter">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Left.Expr.Index.Array.VarGetter.Name</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St5.If.Then.Expr.Return.Value.Expr.Literal" Meta="Bootstrap.Operations.Literal">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St5.If.Then.Expr.Return.Value.Expr.Literal.Value</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St5.If.Then.Expr.Return" Meta="Bootstrap.Operations.Return">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St5.If.Then.Expr.Return.Value</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.BobSmith.FullName.BobSmithFullName.LastName" Meta="Example.ComplexName.LastName">
+    <Values>
+      <Value Type="Bootstrap.String">Smith</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.Person.FullName.C.Card" Meta="Bootstrap.ComplexEntity.Children.C.Card">
+    <Attributes>
+      <Attribute>Bootstrap.Cardinality.IsOverwritable</Attribute>
+      <Attribute>Bootstrap.Cardinality.IsPermanent</Attribute>
+      <Attribute>Example.Person.FullName.C.Card.Min</Attribute>
+      <Attribute>Example.Person.FullName.C.Card.Max</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St1.If.Condition.Expr.Equals.Left.Expr.VarGetter.Name" Meta="Bootstrap.Operations.VarGetter.Name">
+    <Values>
+      <Value Type="Bootstrap.String">fullNameSlot</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Left.Expr.Index.Array" Meta="Bootstrap.Operations.Index.Array">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Left.Expr.Index.Array.VarGetter</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.Person.FullName" Meta="Bootstrap.ComplexEntity.Children">
+    <Attributes>
+      <Attribute>Example.Person.FullName.T</Attribute>
+      <Attribute>Example.Person.FullName.C</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Value.Expr.Index.Index.Literal" Meta="Bootstrap.Operations.Literal">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Value.Expr.Index.Index.Literal.Value</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Type.Type" Meta="Bootstrap.Operations.VariableType">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Type.Type.IsID</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Type.Type.Dimension</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Right.Expr.Equals.Right.Expr.Literal.Value" Meta="Bootstrap.Operations.Literal.Value">
+    <Values>
+      <Value Type="Bootstrap.Number">0.0</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Value.Expr.OpCall" Meta="Bootstrap.Operations.OperationCall">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Value.Expr.OpCall.OpHandle</Attribute>
+      <Attribute>ID:Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Value.Expr.OpCall.Param0</Attribute>
+      <Attribute>ID:Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Value.Expr.OpCall.Param1</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Value.Expr.Index.Type.Type" Meta="Bootstrap.Operations.VariableType">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Value.Expr.Index.Type.Type.IsObject</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Value.Expr.Index.Type.Type.Dimension</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Name" Meta="Bootstrap.Operations.Declaration.Name">
+    <Values>
+      <Value Type="Bootstrap.String">fullName</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St2.Declaration.Value" Meta="Bootstrap.Operations.Declaration.Value">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St2.Declaration.Value.Expr.OpCall</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Value.Expr.OpCall.OpHandle" Meta="Bootstrap.Operations.OperationCall.OpHandle">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Value.Expr.OpCall.OpHandle.Literal</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St7.If.Then" Meta="Bootstrap.Operations.If.Then">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St7.If.Then.Expr.Return</Value>
+    </Values>
+  </Entity>
+  <Entity ID="ID:Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Value.Expr.OpCall.Param1.Value.Literal.Value" Meta="Bootstrap.Operations.Literal.Value">
+    <Values>
+      <Value Type="Reference">Example.ComplexName.FirstName</Value>
+    </Values>
+  </Entity>
+  <Entity ID="ID:Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Value.Expr.OpCall.Param1" Meta="Bootstrap.Operations.OperationCall.Parameters">
+    <Values>
+      <Value Type="Reference">ID:Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Value.Expr.OpCall.Param1.Value.Literal</Value>
+    </Values>
+  </Entity>
+  <Entity ID="ID:Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Value.Expr.OpCall.Param0" Meta="Bootstrap.Operations.OperationCall.Parameters">
+    <Values>
+      <Value Type="Reference">ID:Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Value.Expr.OpCall.Param0.Value.VarGetter</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Right.Expr.Index.Type.Type.IsObject" Meta="Bootstrap.Operations.VariableType.IsObject">
+    <Values>
+      <Value Type="Bootstrap.Bool">true</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Right.Expr.Equals" Meta="Bootstrap.Operations.Equals">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Right.Expr.Equals.Left</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Right.Expr.Equals.IsNE</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Right.Expr.Equals.Right</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Right.Expr.Index.Array.VarGetter" Meta="Bootstrap.Operations.VarGetter">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Right.Expr.Index.Array.VarGetter.Name</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.BobRobSmith.FullName.BobRobSmithFullName" Meta="Example.ComplexName">
+    <Attributes>
+      <Attribute>Example.BobRobSmith.FullName.BobRobSmithFullName.FirstName</Attribute>
+      <Attribute>Example.BobRobSmith.FullName.BobRobSmithFullName.LastName</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St1.If.Condition.Expr.Equals.Right.Expr.Literal.Value" Meta="Bootstrap.Operations.Literal.Value">
+    <Values>
+      <Value Type="Reference">Bootstrap.Operations.Null</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St2.Declaration.Type.Type.Dimension" Meta="Bootstrap.Operations.VariableType.Dimension">
+    <Values>
+      <Value Type="Bootstrap.Number">1.0</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.ComplexName.LastName.C.Card.Max" Meta="Bootstrap.ComplexEntity.Children.C.Card.Max">
+    <Values>
+      <Value Type="Bootstrap.Number">1.0</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Value.Expr.OpCall.OpHandle.Literal.Value" Meta="Bootstrap.Operations.Literal.Value">
+    <Values>
+      <Value Type="Reference">Bootstrap.BuiltInOperations.GetRelevantAttribute</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Name" Meta="Bootstrap.Operations.Declaration.Name">
+    <Values>
+      <Value Type="Bootstrap.String">fullNameSlot</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha" Meta="Bootstrap.Operations.OperationDefinition">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.ReturnType</Attribute>
+      <Attribute>Example.PersonAlpha.ContextType</Attribute>
+      <Attribute>Example.PersonAlpha.Params0</Attribute>
+      <Attribute>Example.PersonAlpha.Definition</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="ID:Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Value.Expr.OpCall.Param1.Value.Literal" Meta="Bootstrap.Operations.Literal">
+    <Attributes>
+      <Attribute>ID:Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Value.Expr.OpCall.Param1.Value.Literal.Value</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Value" Meta="Bootstrap.Operations.Declaration.Value">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Value.Expr.Index</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Type.Type.IsID" Meta="Bootstrap.Operations.VariableType.IsID">
+    <Values>
+      <Value Type="Bootstrap.Bool">true</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Params.Param0.Type.Type.Dimension" Meta="Bootstrap.Operations.VariableType.Dimension">
+    <Values>
+      <Value Type="Bootstrap.Number">0.0</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Value.Expr.Index.Type" Meta="Bootstrap.Operations.Index.Type">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Value.Expr.Index.Type.Type</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Value" Meta="Bootstrap.Operations.Declaration.Value">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Value.Expr.OpCall</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Right.Expr.Index.Type" Meta="Bootstrap.Operations.Index.Type">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Right.Expr.Index.Type.Type</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St2.Declaration.Value.Expr.OpCall.OpHandle.Literal" Meta="Bootstrap.Operations.Literal">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St2.Declaration.Value.Expr.OpCall.OpHandle.Literal.Value</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.Person.FullName.T.Type" Meta="Bootstrap.ComplexEntity.Children.T.T">
+    <Attributes>
+      <Attribute>Bootstrap.Type.IsOverwritable</Attribute>
+      <Attribute>Bootstrap.Type.IsPermanent</Attribute>
+      <Attribute>Example.Person.FullName.T.Type.Type</Attribute>
+      <Attribute>Example.Person.FullName.T.Type.IsInclusive</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Value.Expr.Index.Index" Meta="Bootstrap.Operations.Index.Index">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Value.Expr.Index.Index.Literal</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements" Meta="Bootstrap.Operations.Block.Statements">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St0.Declaration</Value>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St1.If</Value>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St2.Declaration</Value>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St3.If</Value>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St4.Declaration</Value>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St5.If</Value>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St6.Declaration</Value>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St7.If</Value>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St8.Return</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St3.If.Then.Expr.Return" Meta="Bootstrap.Operations.Return">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St3.If.Then.Expr.Return.Value</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Right.Expr.Relational.Left.Expr.Size.Value" Meta="Bootstrap.Operations.Size.Value">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Right.Expr.Relational.Left.Expr.Size.Value.VarGetter</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or" Meta="Bootstrap.Operations.Or">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Left</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Right</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Right" Meta="Bootstrap.Operations.Equals.Right">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Right.Expr.Index</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St1.If.Condition.Expr.Equals.Left" Meta="Bootstrap.Operations.Equals.Left">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St1.If.Condition.Expr.Equals.Left.Expr.VarGetter</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Value.Expr.Index.Array.VarGetter.Name" Meta="Bootstrap.Operations.VarGetter.Name">
+    <Values>
+      <Value Type="Bootstrap.String">fullNameValues</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.ComplexName.LastName.T.Type.Type" Meta="Bootstrap.ComplexEntity.Children.T.T.T">
+    <Values>
+      <Value Type="Reference">Bootstrap.String</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St3.If.Then.Expr.Return.Value" Meta="Bootstrap.Operations.Return.Value">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St3.If.Then.Expr.Return.Value.Expr.Literal</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Params.Param0.Type.Type" Meta="Bootstrap.Operations.VariableType">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Params.Param0.Type.Type.IsID</Attribute>
+      <Attribute>Example.PersonAlpha.Params.Param0.Type.Type.Dimension</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St2.Declaration.Type" Meta="Bootstrap.Operations.Declaration.Type">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St2.Declaration.Type.Type</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.ComplexName.LastName" Meta="Bootstrap.ComplexEntity.Children">
+    <Attributes>
+      <Attribute>Example.ComplexName.LastName.T</Attribute>
+      <Attribute>Example.ComplexName.LastName.C</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St5.If.Condition.Expr.Equals.IsNE" Meta="Bootstrap.Operations.Equals.IsNE">
+    <Values>
+      <Value Type="Bootstrap.Bool">false</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Left.Expr.Index.Array.VarGetter.Name" Meta="Bootstrap.Operations.VarGetter.Name">
+    <Values>
+      <Value Type="Bootstrap.String">firstNames</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.ReturnType" Meta="Bootstrap.Operations.OperationDefinition.ReturnType">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.ReturnType.Type</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Left.Expr.Equals.Right" Meta="Bootstrap.Operations.Equals.Right">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Left.Expr.Equals.Right.Expr.Literal</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.BobSmith.FullName" Meta="Example.Person.FullName">
+    <Values>
+      <Value Type="Reference">Example.BobSmith.FullName.BobSmithFullName</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St7.If" Meta="Bootstrap.Operations.If">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St7.If.Then</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.BobRobSmith.FullName.BobRobSmithFullName.LastName" Meta="Example.ComplexName.LastName">
+    <Values>
+      <Value Type="Bootstrap.String">Smith</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Right.Expr.Index.Index.Literal" Meta="Bootstrap.Operations.Literal">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Right.Expr.Index.Index.Literal.Value</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Type.Type.Dimension" Meta="Bootstrap.Operations.VariableType.Dimension">
+    <Values>
+      <Value Type="Bootstrap.Number">0.0</Value>
+    </Values>
+  </Entity>
+  <Entity ID="ID:Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Value.Expr.OpCall.Param0.Value.VarGetter" Meta="Bootstrap.Operations.VarGetter">
+    <Attributes>
+      <Attribute>ID:Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Value.Expr.OpCall.Param0.Value.VarGetter.Name</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Left.Expr.Index.Index" Meta="Bootstrap.Operations.Index.Index">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Left.Expr.Index.Index.Literal</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Right.Expr.Equals.Left.Expr.Size" Meta="Bootstrap.Operations.Size">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Right.Expr.Equals.Left.Expr.Size.Value</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Params.Param0.Type.Type.IsID" Meta="Bootstrap.Operations.VariableType.IsID">
+    <Values>
+      <Value Type="Bootstrap.Bool">true</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Right.Expr.Index.Index.Literal.Value" Meta="Bootstrap.Operations.Literal.Value">
+    <Values>
+      <Value Type="Bootstrap.Number">1.0</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Value.Expr.Index" Meta="Bootstrap.Operations.Index">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Value.Expr.Index.Type</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Value.Expr.Index.Array</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Value.Expr.Index.Index</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals" Meta="Bootstrap.Operations.Equals">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Left</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.IsNE</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Right</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Left.Expr.Equals.Left.Expr.VarGetter" Meta="Bootstrap.Operations.VarGetter">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Left.Expr.Equals.Left.Expr.VarGetter.Name</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St7.If.Then.Expr.Return.Value.Expr.Literal" Meta="Bootstrap.Operations.Literal">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St7.If.Then.Expr.Return.Value.Expr.Literal.Value</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.Person.FullName.C.Card.Max" Meta="Bootstrap.ComplexEntity.Children.C.Card.Max">
+    <Values>
+      <Value Type="Bootstrap.Number">1.0</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition" Meta="Bootstrap.Operations.OperationDefinition.Body">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St2.Declaration.Value.Expr.OpCall.OpHandle" Meta="Bootstrap.Operations.OperationCall.OpHandle">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St2.Declaration.Value.Expr.OpCall.OpHandle.Literal</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St3.If.Then.Expr.Return.Value.Expr.Literal" Meta="Bootstrap.Operations.Literal">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St3.If.Then.Expr.Return.Value.Expr.Literal.Value</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Type.Type.IsObject" Meta="Bootstrap.Operations.VariableType.IsObject">
+    <Values>
+      <Value Type="Bootstrap.Bool">true</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St7.If.Then.Expr.Return.Value" Meta="Bootstrap.Operations.Return.Value">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St7.If.Then.Expr.Return.Value.Expr.Literal</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St2.Declaration.Value.Expr.OpCall" Meta="Bootstrap.Operations.OperationCall">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St2.Declaration.Value.Expr.OpCall.OpHandle</Attribute>
+      <Attribute>ID:Example.PersonAlpha.Definition.Block.Statements.St2.Declaration.Value.Expr.OpCall.Param0</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St5.If.Then" Meta="Bootstrap.Operations.If.Then">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St5.If.Then.Expr.Return</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Left" Meta="Bootstrap.Operations.Or.Left">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Left.Expr.Equals</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.Person.FullName.T.Type.IsInclusive" Meta="Bootstrap.ComplexEntity.Children.T.T.IsIncl">
+    <Values>
+      <Value Type="Bootstrap.Bool">false</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.Person.FullName.T" Meta="Bootstrap.ComplexEntity.Children.T">
+    <Values>
+      <Value Type="Reference">Example.Person.FullName.T.Type</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Left.Expr.Index.Type.Type.IsObject" Meta="Bootstrap.Operations.VariableType.IsObject">
+    <Values>
+      <Value Type="Bootstrap.Bool">true</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St8.Return" Meta="Bootstrap.Operations.Return">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Value.Expr.OpCall.OpHandle" Meta="Bootstrap.Operations.OperationCall.OpHandle">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Value.Expr.OpCall.OpHandle.Literal</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.Person.FullName.C" Meta="Bootstrap.ComplexEntity.Children.C">
+    <Values>
+      <Value Type="Reference">Example.Person.FullName.C.Card</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Left.Expr.Equals" Meta="Bootstrap.Operations.Equals">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Left.Expr.Equals.Left</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Left.Expr.Equals.IsNE</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Left.Expr.Equals.Right</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Type.Type.Dimension" Meta="Bootstrap.Operations.VariableType.Dimension">
+    <Values>
+      <Value Type="Bootstrap.Number">1.0</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Left.Expr.Equals.Right.Expr.Literal.Value" Meta="Bootstrap.Operations.Literal.Value">
+    <Values>
+      <Value Type="Reference">Bootstrap.Operations.Null</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Left.Expr.Equals.IsNE" Meta="Bootstrap.Operations.Equals.IsNE">
+    <Values>
+      <Value Type="Bootstrap.Bool">false</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.ComplexName.LastName.T.Type" Meta="Bootstrap.ComplexEntity.Children.T.T">
+    <Attributes>
+      <Attribute>Bootstrap.Type.IsOverwritable</Attribute>
+      <Attribute>Bootstrap.Type.IsPermanent</Attribute>
+      <Attribute>Example.ComplexName.LastName.T.Type.Type</Attribute>
+      <Attribute>Example.ComplexName.LastName.T.Type.IsInclusive</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.ReturnType.Type.Type" Meta="Bootstrap.Operations.VariableType.PrimitiveType">
+    <Values>
+      <Value Type="Reference">Bootstrap.Bool</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Type" Meta="Bootstrap.Operations.Declaration.Type">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Type.Type</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Type.Type" Meta="Bootstrap.Operations.VariableType">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Type.Type.IsObject</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Type.Type.Dimension</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St1.If.Then.Expr.Return" Meta="Bootstrap.Operations.Return">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St1.If.Then.Expr.Return.Value</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St5.If.Then.Expr.Return.Value" Meta="Bootstrap.Operations.Return.Value">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St5.If.Then.Expr.Return.Value.Expr.Literal</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Value.Expr.Index.Array" Meta="Bootstrap.Operations.Index.Array">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Value.Expr.Index.Array.VarGetter</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.ComplexName.LastName.T" Meta="Bootstrap.ComplexEntity.Children.T">
+    <Values>
+      <Value Type="Reference">Example.ComplexName.LastName.T.Type</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St2.Declaration.Type.Type.IsObject" Meta="Bootstrap.Operations.VariableType.IsObject">
+    <Values>
+      <Value Type="Bootstrap.Bool">true</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St1.If.Condition.Expr.Equals.Left.Expr.VarGetter" Meta="Bootstrap.Operations.VarGetter">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St1.If.Condition.Expr.Equals.Left.Expr.VarGetter.Name</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="ID:Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Value.Expr.OpCall.Param0.Value.VarGetter.Name" Meta="Bootstrap.Operations.VarGetter.Name">
+    <Values>
+      <Value Type="Bootstrap.String">instance</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Params0" Meta="Bootstrap.Operations.OperationDefinition.Parameters">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Params.Param0</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Right.Expr.Equals.Right.Expr.Literal" Meta="Bootstrap.Operations.Literal">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Right.Expr.Equals.Right.Expr.Literal.Value</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St5.If.Then.Expr.Return.Value.Expr.Literal.Value" Meta="Bootstrap.Operations.Literal.Value">
+    <Values>
+      <Value Type="Bootstrap.Bool">false</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.ComplexName.LastName.C" Meta="Bootstrap.ComplexEntity.Children.C">
+    <Values>
+      <Value Type="Reference">Example.ComplexName.LastName.C.Card</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.Person" Meta="Bootstrap.ComplexEntity">
+    <Attributes>
+      <Attribute>Example.Person.FullName</Attribute>
+      <Attribute>Example.Person.AlphaValidation</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Right.Expr.Relational.Left.Expr.Size.Value.VarGetter.Name" Meta="Bootstrap.Operations.VarGetter.Name">
+    <Values>
+      <Value Type="Bootstrap.String">firstNames</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St1.If.Condition.Expr.Equals.Right.Expr.Literal" Meta="Bootstrap.Operations.Literal">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St1.If.Condition.Expr.Equals.Right.Expr.Literal.Value</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St2.Declaration.Value.Expr.OpCall.OpHandle.Literal.Value" Meta="Bootstrap.Operations.Literal.Value">
+    <Values>
+      <Value Type="Reference">Bootstrap.BuiltInOperations.Values</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.ComplexName.FirstName.T.Type.IsInclusive" Meta="Bootstrap.ComplexEntity.Children.T.T.IsIncl">
+    <Values>
+      <Value Type="Bootstrap.Bool">false</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Left.Expr.Equals.Right.Expr.Literal" Meta="Bootstrap.Operations.Literal">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Left.Expr.Equals.Right.Expr.Literal.Value</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Right.Expr.Index.Type.Type.Dimension" Meta="Bootstrap.Operations.VariableType.Dimension">
+    <Values>
+      <Value Type="Bootstrap.Number">0.0</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Right.Expr.Equals.Left.Expr.Size.Value" Meta="Bootstrap.Operations.Size.Value">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Right.Expr.Equals.Left.Expr.Size.Value.VarGetter</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Left.Expr.Equals.Left.Expr.VarGetter.Name" Meta="Bootstrap.Operations.VarGetter.Name">
+    <Values>
+      <Value Type="Bootstrap.String">firstNames</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St3.If.Then.Expr.Return.Value.Expr.Literal.Value" Meta="Bootstrap.Operations.Literal.Value">
+    <Values>
+      <Value Type="Bootstrap.Bool">true</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Left.Expr.Equals.Left.Expr.VarGetter" Meta="Bootstrap.Operations.VarGetter">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Left.Expr.Equals.Left.Expr.VarGetter.Name</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Right.Expr.Equals.IsNE" Meta="Bootstrap.Operations.Equals.IsNE">
+    <Values>
+      <Value Type="Bootstrap.Bool">false</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.BobSmith.FullName.BobSmithFullName.FirstName" Meta="Example.ComplexName.FirstName">
+    <Values>
+      <Value Type="Bootstrap.String">Bob</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.BobSmith" Meta="Example.Person">
+    <Attributes>
+      <Attribute>Example.BobSmith.FullName</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Value.Expr.OpCall.OpHandle.Literal" Meta="Bootstrap.Operations.Literal">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Value.Expr.OpCall.OpHandle.Literal.Value</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Left.Expr.Index.Index.Literal" Meta="Bootstrap.Operations.Literal">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Left.Expr.Index.Index.Literal.Value</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.ComplexName.FirstName.C.Card.Max" Meta="Bootstrap.ComplexEntity.Children.C.Card.Max">
+    <Values>
+      <Value Type="Bootstrap.Number">2.0</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Value.Expr.OpCall.OpHandle.Literal" Meta="Bootstrap.Operations.Literal">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Value.Expr.OpCall.OpHandle.Literal.Value</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Params.Param0.Type" Meta="Bootstrap.Operations.Parameter.Type">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Params.Param0.Type.Type</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.ContextType" Meta="Bootstrap.Operations.OperationDefinition.ContextType">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.ContextType.Type</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Left.Expr.Equals.Right.Expr.Literal" Meta="Bootstrap.Operations.Literal">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Left.Expr.Equals.Right.Expr.Literal.Value</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St1.If.Condition" Meta="Bootstrap.Operations.If.Condition">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St1.If.Condition.Expr.Equals</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St2.Declaration.Type.Type" Meta="Bootstrap.Operations.VariableType">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St2.Declaration.Type.Type.IsObject</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St2.Declaration.Type.Type.Dimension</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Left.Expr.Equals.Right" Meta="Bootstrap.Operations.Equals.Right">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Left.Expr.Equals.Right.Expr.Literal</Value>
+    </Values>
+  </Entity>
+  <Entity ID="ID:Example.PersonAlpha.Definition.Block.Statements.St2.Declaration.Value.Expr.OpCall.Param0.Value.VarGetter" Meta="Bootstrap.Operations.VarGetter">
+    <Attributes>
+      <Attribute>ID:Example.PersonAlpha.Definition.Block.Statements.St2.Declaration.Value.Expr.OpCall.Param0.Value.VarGetter.Name</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.ComplexName.LastName.C.Card" Meta="Bootstrap.ComplexEntity.Children.C.Card">
+    <Attributes>
+      <Attribute>Bootstrap.Cardinality.IsOverwritable</Attribute>
+      <Attribute>Bootstrap.Cardinality.IsPermanent</Attribute>
+      <Attribute>Example.ComplexName.LastName.C.Card.Min</Attribute>
+      <Attribute>Example.ComplexName.LastName.C.Card.Max</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St3.If" Meta="Bootstrap.Operations.If">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St3.If.Then</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St5.If.Condition" Meta="Bootstrap.Operations.If.Condition">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St5.If.Condition.Expr.Equals</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Right.Expr.Relational.Left.Expr.Size" Meta="Bootstrap.Operations.Size">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Right.Expr.Relational.Left.Expr.Size.Value</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St5.If.Condition.Expr.Equals.Right.Expr.Literal.Value" Meta="Bootstrap.Operations.Literal.Value">
+    <Values>
+      <Value Type="Reference">Bootstrap.Operations.Null</Value>
+    </Values>
+  </Entity>
+  <Entity ID="ID:Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Value.Expr.OpCall.Param0.Value.VarGetter.Name" Meta="Bootstrap.Operations.VarGetter.Name">
+    <Values>
+      <Value Type="Bootstrap.String">fullName</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.ComplexName.LastName.T.Type.IsInclusive" Meta="Bootstrap.ComplexEntity.Children.T.T.IsIncl">
+    <Values>
+      <Value Type="Bootstrap.Bool">false</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Right.Expr.Index.Index" Meta="Bootstrap.Operations.Index.Index">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Right.Expr.Index.Index.Literal</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.BobRobSmith.FullName" Meta="Example.Person.FullName">
+    <Values>
+      <Value Type="Reference">Example.BobRobSmith.FullName.BobRobSmithFullName</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St2.Declaration.Name" Meta="Bootstrap.Operations.Declaration.Name">
+    <Values>
+      <Value Type="Bootstrap.String">fullNameValues</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.ComplexName.FirstName.T.Type.Type" Meta="Bootstrap.ComplexEntity.Children.T.T.T">
+    <Values>
+      <Value Type="Reference">Bootstrap.String</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Right" Meta="Bootstrap.Operations.Or.Right">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Right.Expr.Relational</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.ReturnType.Type" Meta="Bootstrap.Operations.VariableType">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.ReturnType.Type.Type</Attribute>
+      <Attribute>Example.PersonAlpha.ReturnType.Type.Dimension</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St1.If.Then.Expr.Return.Value.Expr.Literal" Meta="Bootstrap.Operations.Literal">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St1.If.Then.Expr.Return.Value.Expr.Literal.Value</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Left.Expr.Equals.Left" Meta="Bootstrap.Operations.Equals.Left">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Left.Expr.Equals.Left.Expr.VarGetter</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St5.If.Condition.Expr.Equals.Left.Expr.VarGetter.Name" Meta="Bootstrap.Operations.VarGetter.Name">
+    <Values>
+      <Value Type="Bootstrap.String">fullName</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Left" Meta="Bootstrap.Operations.Equals.Left">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Left.Expr.Index</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St3.If.Then" Meta="Bootstrap.Operations.If.Then">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St3.If.Then.Expr.Return</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.ComplexName" Meta="Bootstrap.ComplexEntity">
+    <Attributes>
+      <Attribute>Example.ComplexName.FirstName</Attribute>
+      <Attribute>Example.ComplexName.LastName</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St1.If.Then.Expr.Return.Value.Expr.Literal.Value" Meta="Bootstrap.Operations.Literal.Value">
+    <Values>
+      <Value Type="Bootstrap.Bool">true</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.ContextType.Type.IsID" Meta="Bootstrap.Operations.VariableType.IsID">
+    <Values>
+      <Value Type="Bootstrap.Bool">true</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St5.If" Meta="Bootstrap.Operations.If">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St5.If.Condition</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St5.If.Then</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.ContextType.Type.Dimension" Meta="Bootstrap.Operations.VariableType.Dimension">
+    <Values>
+      <Value Type="Bootstrap.Number">0.0</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Value.Expr.Index.Type.Type.Dimension" Meta="Bootstrap.Operations.VariableType.Dimension">
+    <Values>
+      <Value Type="Bootstrap.Number">0.0</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Right.Expr.Index" Meta="Bootstrap.Operations.Index">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Right.Expr.Index.Type</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Right.Expr.Index.Array</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Right.Expr.Index.Index</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St5.If.Condition.Expr.Equals.Right.Expr.Literal" Meta="Bootstrap.Operations.Literal">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St5.If.Condition.Expr.Equals.Right.Expr.Literal.Value</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.BobRobSmith.FullName.BobRobSmithFullName.FirstName" Meta="Example.ComplexName.FirstName">
+    <Values>
+      <Value Type="Bootstrap.String">Bob</Value>
+      <Value Type="Bootstrap.String">Rob</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Left.Expr.Index.Type.Type.Dimension" Meta="Bootstrap.Operations.VariableType.Dimension">
+    <Values>
+      <Value Type="Bootstrap.Number">0.0</Value>
+    </Values>
+  </Entity>
+  <Entity ID="ID:Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Value.Expr.OpCall.Param1.Value.Literal.Value" Meta="Bootstrap.Operations.Literal.Value">
+    <Values>
+      <Value Type="Reference">Example.Person.FullName</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.IsNE" Meta="Bootstrap.Operations.Equals.IsNE">
+    <Values>
+      <Value Type="Bootstrap.Bool">true</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Right.Expr.Equals.Left" Meta="Bootstrap.Operations.Equals.Left">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Right.Expr.Equals.Left.Expr.Size</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value" Meta="Bootstrap.Operations.Return.Value">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Right" Meta="Bootstrap.Operations.Or.Right">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Right.Expr.Equals</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Right.Expr.Equals.Left.Expr.Size.Value.VarGetter.Name" Meta="Bootstrap.Operations.VarGetter.Name">
+    <Values>
+      <Value Type="Bootstrap.String">fullNameValues</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.ComplexName.LastName.C.Card.Min" Meta="Bootstrap.ComplexEntity.Children.C.Card.Min">
+    <Values>
+      <Value Type="Bootstrap.Number">1.0</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.Person.FullName.T.Type.Type" Meta="Bootstrap.ComplexEntity.Children.T.T.T">
+    <Values>
+      <Value Type="Reference">Example.ComplexName</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Name" Meta="Bootstrap.Operations.Declaration.Name">
+    <Values>
+      <Value Type="Bootstrap.String">firstNames</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.ComplexName.FirstName.T.Type" Meta="Bootstrap.ComplexEntity.Children.T.T">
+    <Attributes>
+      <Attribute>Bootstrap.Type.IsOverwritable</Attribute>
+      <Attribute>Bootstrap.Type.IsPermanent</Attribute>
+      <Attribute>Example.ComplexName.FirstName.T.Type.Type</Attribute>
+      <Attribute>Example.ComplexName.FirstName.T.Type.IsInclusive</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Left" Meta="Bootstrap.Operations.Or.Left">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Left.Expr.Equals</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Right.Expr.Relational.Right.Expr.Literal" Meta="Bootstrap.Operations.Literal">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Right.Expr.Relational.Right.Expr.Literal.Value</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St1.If.Then.Expr.Return.Value" Meta="Bootstrap.Operations.Return.Value">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St1.If.Then.Expr.Return.Value.Expr.Literal</Value>
+    </Values>
+  </Entity>
+  <Entity ID="ID:Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Value.Expr.OpCall.Param1.Value.Literal" Meta="Bootstrap.Operations.Literal">
+    <Attributes>
+      <Attribute>ID:Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Value.Expr.OpCall.Param1.Value.Literal.Value</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St5.If.Condition.Expr.Equals.Left.Expr.VarGetter" Meta="Bootstrap.Operations.VarGetter">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St5.If.Condition.Expr.Equals.Left.Expr.VarGetter.Name</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Right.Expr.Relational.Left.Expr.Size.Value.VarGetter" Meta="Bootstrap.Operations.VarGetter">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Right.Expr.Relational.Left.Expr.Size.Value.VarGetter.Name</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.ComplexName.FirstName.C.Card" Meta="Bootstrap.ComplexEntity.Children.C.Card">
+    <Attributes>
+      <Attribute>Bootstrap.Cardinality.IsOverwritable</Attribute>
+      <Attribute>Bootstrap.Cardinality.IsPermanent</Attribute>
+      <Attribute>Example.ComplexName.FirstName.C.Card.Min</Attribute>
+      <Attribute>Example.ComplexName.FirstName.C.Card.Max</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Left.Expr.Index.Index.Literal.Value" Meta="Bootstrap.Operations.Literal.Value">
+    <Values>
+      <Value Type="Bootstrap.Number">0.0</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.BobRobSmith" Meta="Example.Person">
+    <Attributes>
+      <Attribute>Example.BobRobSmith.FullName</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Params.Param0" Meta="Bootstrap.Operations.Parameter">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Params.Param0.Type</Attribute>
+      <Attribute>Example.PersonAlpha.Params.Param0.Name</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St5.If.Condition.Expr.Equals.Left" Meta="Bootstrap.Operations.Equals.Left">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St5.If.Condition.Expr.Equals.Left.Expr.VarGetter</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Right.Expr.Index.Type.Type" Meta="Bootstrap.Operations.VariableType">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Right.Expr.Index.Type.Type.IsObject</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Right.Expr.Index.Type.Type.Dimension</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Value.Expr.Index.Type.Type.IsObject" Meta="Bootstrap.Operations.VariableType.IsObject">
+    <Values>
+      <Value Type="Bootstrap.Bool">true</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St0.Declaration" Meta="Bootstrap.Operations.Declaration">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Type</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Name</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Value</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St1.If.Condition.Expr.Equals.Right" Meta="Bootstrap.Operations.Equals.Right">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St1.If.Condition.Expr.Equals.Right.Expr.Literal</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St4.Declaration" Meta="Bootstrap.Operations.Declaration">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Type</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Name</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Value</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Type.Type.Dimension" Meta="Bootstrap.Operations.VariableType.Dimension">
+    <Values>
+      <Value Type="Bootstrap.Number">0.0</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St2.Declaration" Meta="Bootstrap.Operations.Declaration">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St2.Declaration.Type</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St2.Declaration.Name</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St2.Declaration.Value</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Left.Expr.Index" Meta="Bootstrap.Operations.Index">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Left.Expr.Index.Type</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Left.Expr.Index.Array</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Left.Expr.Index.Index</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St1.If.Condition.Expr.Equals" Meta="Bootstrap.Operations.Equals">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St1.If.Condition.Expr.Equals.Left</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St1.If.Condition.Expr.Equals.IsNE</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St1.If.Condition.Expr.Equals.Right</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.BobSmith.FullName.BobSmithFullName" Meta="Example.ComplexName">
+    <Attributes>
+      <Attribute>Example.BobSmith.FullName.BobSmithFullName.FirstName</Attribute>
+      <Attribute>Example.BobSmith.FullName.BobSmithFullName.LastName</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.Person.FullName.C.Card.Min" Meta="Bootstrap.ComplexEntity.Children.C.Card.Min">
+    <Values>
+      <Value Type="Bootstrap.Number">1.0</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St1.If" Meta="Bootstrap.Operations.If">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St1.If.Condition</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St1.If.Then</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.Person.AlphaValidation" Meta="Bootstrap.Base.AlphaValidation">
+    <Attributes>
+      <Attribute>Bootstrap.Base.AlphaValidation.OpSig</Attribute>
+      <Attribute>Bootstrap.Base.AlphaValidation.T</Attribute>
+      <Attribute>Bootstrap.Base.AlphaValidation.C</Attribute>
+    </Attributes>
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.ComplexName.FirstName" Meta="Bootstrap.ComplexEntity.Children">
+    <Attributes>
+      <Attribute>Example.ComplexName.FirstName.T</Attribute>
+      <Attribute>Example.ComplexName.FirstName.C</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St6.Declaration" Meta="Bootstrap.Operations.Declaration">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Type</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Name</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Value</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Left.Expr.Index.Type.Type" Meta="Bootstrap.Operations.VariableType">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Left.Expr.Index.Type.Type.IsObject</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Left.Expr.Index.Type.Type.Dimension</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.ReturnType.Type.Dimension" Meta="Bootstrap.Operations.VariableType.Dimension">
+    <Values>
+      <Value Type="Bootstrap.Number">0.0</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Right.Expr.Relational.Rel" Meta="Bootstrap.Operations.Relational.Rel">
+    <Values>
+      <Value Type="Reference">Bootstrap.Operations.RelationTypes.LesserThan</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Params.Param0.Name" Meta="Bootstrap.Operations.Parameter.Name">
+    <Values>
+      <Value Type="Bootstrap.String">instance</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Left.Expr.Equals.Left" Meta="Bootstrap.Operations.Equals.Left">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Left.Expr.Equals.Left.Expr.VarGetter</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Left.Expr.Equals" Meta="Bootstrap.Operations.Equals">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Left.Expr.Equals.Left</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Left.Expr.Equals.IsNE</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Left.Expr.Equals.Right</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St1.If.Then" Meta="Bootstrap.Operations.If.Then">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St1.If.Then.Expr.Return</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Left.Expr.Equals.Right.Expr.Literal.Value" Meta="Bootstrap.Operations.Literal.Value">
+    <Values>
+      <Value Type="Reference">Bootstrap.Operations.Null</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Right.Expr.Index.Array.VarGetter.Name" Meta="Bootstrap.Operations.VarGetter.Name">
+    <Values>
+      <Value Type="Bootstrap.String">firstNames</Value>
+    </Values>
+  </Entity>
+  <Entity ID="ID:Example.PersonAlpha.Definition.Block.Statements.St2.Declaration.Value.Expr.OpCall.Param0" Meta="Bootstrap.Operations.OperationCall.Parameters">
+    <Values>
+      <Value Type="Reference">ID:Example.PersonAlpha.Definition.Block.Statements.St2.Declaration.Value.Expr.OpCall.Param0.Value.VarGetter</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St1.If.Condition.Expr.Equals.IsNE" Meta="Bootstrap.Operations.Equals.IsNE">
+    <Values>
+      <Value Type="Bootstrap.Bool">false</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Right.Expr.Relational" Meta="Bootstrap.Operations.Relational">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Right.Expr.Relational.Left</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Right.Expr.Relational.Rel</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Right.Expr.Relational.Right</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Value.Expr.OpCall.OpHandle.Literal.Value" Meta="Bootstrap.Operations.Literal.Value">
+    <Values>
+      <Value Type="Reference">Bootstrap.BuiltInOperations.GetRelevantAttributeValues</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St5.If.Condition.Expr.Equals" Meta="Bootstrap.Operations.Equals">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St5.If.Condition.Expr.Equals.Left</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St5.If.Condition.Expr.Equals.IsNE</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St5.If.Condition.Expr.Equals.Right</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Value" Meta="Bootstrap.Operations.Declaration.Value">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Value.Expr.OpCall</Value>
+    </Values>
+  </Entity>
+  <Entity ID="ID:Example.PersonAlpha.Definition.Block.Statements.St2.Declaration.Value.Expr.OpCall.Param0.Value.VarGetter.Name" Meta="Bootstrap.Operations.VarGetter.Name">
+    <Values>
+      <Value Type="Bootstrap.String">fullNameSlot</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Value.Expr.Index.Index.Literal.Value" Meta="Bootstrap.Operations.Literal.Value">
+    <Values>
+      <Value Type="Bootstrap.Number">0.0</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Type.Type" Meta="Bootstrap.Operations.VariableType">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Type.Type.IsID</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Type.Type.Dimension</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Right.Expr.Equals.Left.Expr.Size.Value.VarGetter" Meta="Bootstrap.Operations.VarGetter">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Right.Expr.Equals.Left.Expr.Size.Value.VarGetter.Name</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St5.If.Condition.Expr.Equals.Right" Meta="Bootstrap.Operations.Equals.Right">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St5.If.Condition.Expr.Equals.Right.Expr.Literal</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Type" Meta="Bootstrap.Operations.Declaration.Type">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Type.Type</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or" Meta="Bootstrap.Operations.Or">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Left</Attribute>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Right</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St7.If.Then.Expr.Return" Meta="Bootstrap.Operations.Return">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St7.If.Then.Expr.Return.Value</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="ID:Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Value.Expr.OpCall.Param0.Value.VarGetter" Meta="Bootstrap.Operations.VarGetter">
+    <Attributes>
+      <Attribute>ID:Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Value.Expr.OpCall.Param0.Value.VarGetter.Name</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.ComplexName.FirstName.C" Meta="Bootstrap.ComplexEntity.Children.C">
+    <Values>
+      <Value Type="Reference">Example.ComplexName.FirstName.C.Card</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Left.Expr.Index.Type" Meta="Bootstrap.Operations.Index.Type">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Left.Expr.Index.Type.Type</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Left.Expr.Equals.IsNE" Meta="Bootstrap.Operations.Equals.IsNE">
+    <Values>
+      <Value Type="Bootstrap.Bool">false</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block" Meta="Bootstrap.Operations.Block">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.ComplexName.FirstName.T" Meta="Bootstrap.ComplexEntity.Children.T">
+    <Values>
+      <Value Type="Reference">Example.ComplexName.FirstName.T.Type</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Right.Expr.Relational.Right.Expr.Literal.Value" Meta="Bootstrap.Operations.Literal.Value">
+    <Values>
+      <Value Type="Bootstrap.Number">2.0</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Right.Expr.Index.Array" Meta="Bootstrap.Operations.Index.Array">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St8.Return.Value.Expr.Equals.Right.Expr.Index.Array.VarGetter</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Left.Expr.Equals.Left.Expr.VarGetter.Name" Meta="Bootstrap.Operations.VarGetter.Name">
+    <Values>
+      <Value Type="Bootstrap.String">fullNameValues</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Value.Expr.Index.Array.VarGetter" Meta="Bootstrap.Operations.VarGetter">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.Definition.Block.Statements.St4.Declaration.Value.Expr.Index.Array.VarGetter.Name</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="ID:Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Value.Expr.OpCall.Param1" Meta="Bootstrap.Operations.OperationCall.Parameters">
+    <Values>
+      <Value Type="Reference">ID:Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Value.Expr.OpCall.Param1.Value.Literal</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition" Meta="Bootstrap.Operations.If.Condition">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or</Value>
+    </Values>
+  </Entity>
+  <Entity ID="ID:Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Value.Expr.OpCall.Param0" Meta="Bootstrap.Operations.OperationCall.Parameters">
+    <Values>
+      <Value Type="Reference">ID:Example.PersonAlpha.Definition.Block.Statements.St6.Declaration.Value.Expr.OpCall.Param0.Value.VarGetter</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Right.Expr.Equals.Right" Meta="Bootstrap.Operations.Equals.Right">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St3.If.Condition.Expr.Or.Right.Expr.Equals.Right.Expr.Literal</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition" Meta="Bootstrap.Operations.If.Condition">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Type.Type.IsID" Meta="Bootstrap.Operations.VariableType.IsID">
+    <Values>
+      <Value Type="Bootstrap.Bool">true</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Type" Meta="Bootstrap.Operations.Declaration.Type">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St0.Declaration.Type.Type</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Right.Expr.Relational.Right" Meta="Bootstrap.Operations.Relational.Right">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Right.Expr.Relational.Right.Expr.Literal</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.ContextType.Type" Meta="Bootstrap.Operations.VariableType">
+    <Attributes>
+      <Attribute>Example.PersonAlpha.ContextType.Type.IsID</Attribute>
+      <Attribute>Example.PersonAlpha.ContextType.Type.Dimension</Attribute>
+    </Attributes>
+  </Entity>
+  <Entity ID="Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Right.Expr.Relational.Left" Meta="Bootstrap.Operations.Relational.Left">
+    <Values>
+      <Value Type="Reference">Example.PersonAlpha.Definition.Block.Statements.St7.If.Condition.Expr.Or.Right.Expr.Relational.Left.Expr.Size</Value>
+    </Values>
+  </Entity>
+  <Entity ID="Example.ComplexName.FirstName.C.Card.Min" Meta="Bootstrap.ComplexEntity.Children.C.Card.Min">
+    <Values>
+      <Value Type="Bootstrap.Number">1.0</Value>
+    </Values>
+  </Entity>
+</Model>

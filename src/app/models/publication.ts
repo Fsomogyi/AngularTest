@@ -12,4 +12,5 @@ export interface Publication {
     volume?: number;
     issue?: number;
     link?: string;
+    file?: string;
 }

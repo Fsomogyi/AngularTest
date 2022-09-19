@@ -7,6 +7,21 @@
     font-size: 20px;
 }
 
-li {
-    margin: 15px 0;
+.publication {
+    //background-color: rgb(230, 230, 238);
+    border: 2px solid rgb(111, 81, 81);
+    margin-bottom: 40px;
+    box-shadow: 10px 10px rgb(151, 151, 160);
+}
+
+.pub-title {
+    margin-top: 5px;
+}
+
+.pub-misc {
+    margin-top: 5px;
+}
+
+.pub-links {
+    margin-top: 5px;
 }

@@ -1,33 +1,56 @@
-<main class="container-fluid ">
-    <h1>Publications</h1>
+<main class="container-fluid">
+    <h1>Related Publications</h1>
     <div class="container">
         <div class="row p-1">
-          <ol>
-            <li *ngFor="let pub of publications">
-                {{processAuthors(pub.authors)}}
-                <b>{{pub.title}}</b>,
-                <em>{{pub.in}}</em>
+          <div class="publication" *ngFor="let pub of publications">
+            <div class="authors">
+              {{processAuthors(pub.authors)}}
+            </div>
+            
+            <div class="pub-title">
+              <b>{{pub.title}} </b>
+              <span class="badge badge-primary bg-primary" *ngIf="pub.type == 'proceedings'"> 
+              InProceedings
+              </span>
+              <span class="badge badge-primary bg-primary" *ngIf="pub.type == 'journal'">
+              Journal
+              </span>
+            </div>
+            
+            <div class="pub-misc">
+              In: <em>{{pub.in}}</em>
 
-                <span *ngIf="pub.type == 'proceedings'">, 
-                  {{pub.location}},
-                </span>
+              <span *ngIf="pub.type == 'proceedings'">, 
+                {{pub.location}},
+              </span>
 
-                <span *ngIf="pub.type == 'journal'">, 
-                  vol. {{pub.volume}},
-                  no. {{pub.issue}},
-                </span>
+              <span *ngIf="pub.type == 'journal'">, 
+                vol. {{pub.volume}},
+                no. {{pub.issue}},
+              </span>
 
-                <span *ngIf="pub.pages != undefined">
-                  pp.{{pub.pages}}, 
-                </span>
+              <span *ngIf="pub.pages != undefined">
+                pp.{{pub.pages}}, 
+              </span>
 
-                {{pub.year}}.
+              {{pub.year}}.
+            </div>
 
-                <span *ngIf="pub.link != undefined">
-                  (<a href={{pub.link}}>{{pub.link}}</a>)
-                </span>
-            </li>
-          </ol>
+            <div class="pub-links">
+              <span *ngIf="pub.link != undefined">
+                <a href={{pub.link}} target=”_blank”>Link</a>
+              </span>
+  
+              <span *ngIf="pub.file != undefined">
+                <span *ngIf="pub.link != undefined"> | </span>
+                <a href="assets/papers/{{pub.file}}" target=”_blank”>File</a>
+              </span>
+
+              <span>
+                | <a href="TODO" target=”_blank”> BibTeX</a>
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 </main>

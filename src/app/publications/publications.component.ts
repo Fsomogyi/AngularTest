@@ -19,7 +19,7 @@ export class PublicationsComponent implements OnInit {
         pages: undefined,
         volume: undefined,
         issue: undefined,
-        link: "TODO"
+        file: "AACS_2015.pdf"
     },
 
     {
@@ -47,7 +47,7 @@ export class PublicationsComponent implements OnInit {
         pages: undefined,
         volume: undefined,
         issue: undefined,
-        link: "TODO"
+        link: "https://ieeexplore.ieee.org/document/7954370"
     },
 
     {
@@ -75,7 +75,8 @@ export class PublicationsComponent implements OnInit {
         pages: undefined,
         volume: undefined,
         issue: undefined,
-        link: "http://www.scitepress.org/Papers/2018/66561/66561.pdf"
+        link: "http://www.scitepress.org/Papers/2018/66561/66561.pdf",
+        file: "MODELSWARD_2018_Poster.pdf"
     },
 
     {
@@ -89,7 +90,8 @@ export class PublicationsComponent implements OnInit {
         pages: "643-652",
         volume: undefined,
         issue: undefined,
-        link: "http://ceur-ws.org/Vol-2245/multi_paper_2.pdf"
+        link: "http://ceur-ws.org/Vol-2245/multi_paper_2.pdf",
+        file: "MODELS_2018_Poster.pdf"
     },
 
     {
@@ -103,7 +105,7 @@ export class PublicationsComponent implements OnInit {
         pages: undefined,
         volume: undefined,
         issue: undefined,
-        link: "TODO"
+        file: "AACS_2019.pdf"
     },
 
     {
@@ -117,7 +119,7 @@ export class PublicationsComponent implements OnInit {
         pages: undefined,
         volume: undefined,
         issue: undefined,
-        link: "TODO"
+        link: "https://doi.org/10.1109/MODELS-C.2019.00024"
     },
 
     {
@@ -145,7 +147,7 @@ export class PublicationsComponent implements OnInit {
         pages: "481-488",
         volume: undefined,
         issue: undefined,
-        link: "https://dx.doi.org/10.5220/0007580404810488 TODO BUGOS"
+        link: "https://dl.acm.org/doi/abs/10.5220/0007580404810488"
     },
 
     {
@@ -162,19 +164,19 @@ export class PublicationsComponent implements OnInit {
         link: "https://doi.org/10.1109/MODELS-C.2019.00073"
     },
 
-    {
-        id: 12,
-        authors: ['Ferenc Somogyi', 'Gergely Mezei', 'Dániel Urbán', 'Zoltán Theisz', 'Sándor Bácsi'],
-        type: 'proceedings',
-        title: 'Challenges in the field of multi-level modeling',
-        in: 'Automation and Applied Computer Science Workshop',
-        year: 2019,
-        location: "Budapest, Hungary",
-        pages: "48-59",
-        volume: undefined,
-        issue: undefined,
-        link: "TODO"
-    },
+//    {
+//        id: 12,
+//        authors: ['Ferenc Somogyi', 'Gergely Mezei', 'Dániel Urbán', 'Zoltán Theisz', 'Sándor Bácsi'],
+//        type: 'proceedings',
+//        title: 'Challenges in the field of multi-level modeling',
+//        in: 'Automation and Applied Computer Science Workshop',
+//        year: 2019,
+//        location: "Budapest, Hungary",
+//        pages: "48-59",
+//        volume: undefined,
+//        issue: undefined,
+//        link: "TODO"
+//    },
 
     {
         id: 13,
@@ -192,7 +194,7 @@ export class PublicationsComponent implements OnInit {
 
     {
         id: 14,
-        authors: ['Gergely Mezei', 'Máté Hídvégi', 'Norbert Somogyi'],
+        authors: ['Andreas Prinz', 'Gergely Mezei'],
         type: 'proceedings',
         title: 'The Art of Bootstrapping',
         in: 'Model-Driven Engineering and Software Development : 7th International Conference, MODELSWARD 2019, Revised Selected Papers',
@@ -206,7 +208,7 @@ export class PublicationsComponent implements OnInit {
 
     {
         id: 15,
-        authors: ['Gergely Mezei', 'Máté Hídvégi', 'Norbert Somogyi'],
+        authors: ['Norbert Somogyi', 'Máté Hídvégi', 'Gergely Mezei'],
         type: 'proceedings',
         title: 'DMLA 3.0: Towards an Industrial Multi-Layer Modeling Framework',
         in: 'Automation and Applied Computer Science Workshop',
@@ -215,7 +217,7 @@ export class PublicationsComponent implements OnInit {
         pages: undefined,
         volume: undefined,
         issue: undefined,
-        link: "TODO"
+        file: "AACS_2021.pdf"
     },
 
     {
@@ -241,8 +243,8 @@ export class PublicationsComponent implements OnInit {
         year: 2021,
         location: undefined,
         pages: "1-36",
-        volume: undefined,
-        issue: undefined,
+        volume: 21,
+        issue: 2,
         link: "https://doi.org/10.1007/s10270-021-00900-2"
     },
 
@@ -256,8 +258,10 @@ export class PublicationsComponent implements OnInit {
   processAuthors(authors: string[]): string {
     let result: string = ""
     authors.forEach (
-      a => result = result + a[0] + '.' + a.substring(a.search(' ')) + ', '
+      //a => result = result + a[0] + '.' + a.substring(a.search(' ')) + ', '
+      a => result = result + a + ', '
     )
+    result = result.slice(0, result.length - 2)
     return result
   }
 }

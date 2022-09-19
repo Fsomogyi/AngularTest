@@ -1,0 +1,151 @@
+package Example {
+
+//As first, we import the default bootstrap packages, to shorten references to bootstrap elements, 
+//e.g. ComplexEntity instead of Bootstrap.ComplexEntity
+import Bootstrap.*;
+import Bootstrap.BuiltInOperations.*;
+import Bootstrap.Validation.*;
+import Bootstrap.Validation.Helper.*;
+	
+//We define a type representing the name of a person
+ComplexName : ComplexEntity{
+	
+	//===========================================================================
+	// The definition of the Firstname slot and its constraints (type and cardinality)
+	//	
+	//The slot has a type constraint...
+	@T: ComplexEntity.Children.T =		//...that instantiates the slot ComplexEntity.Children.T (used to define the type of Children of ComplexEntity)
+		Type : ComplexEntity.Children.T.T	// Type is the name of the new type constraint, while ComplexEntity.Children.T.T is its type
+											// We know that this may be hard to follow at first look, thus, check the concrete Person example for a detailed explanation 
+		{		
+			Type.IsOverwritable;		// Some parts of the type constraint are the same as in their meta: we reuse them without instantiation. 
+										// This is, where the partial instantiation behavior of DMLA is important. 
+										// These reused parts are to be mentioned but not redefined here
+			Type.IsPermanent;			// The exact meaning of these two flags (IsOverwritable/IsPermanent) are not detailed here
+			
+			//The type constraint sets the type of the slot to $String (built-in bootstrap element representing string)
+			slot Type : ComplexEntity.Children.T.T.T = $String;				//This part must be redefined (customized) here, since we would like to change it
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;  	//IsIncl stands for IsInclusive: here we do not allow using $String as the value in the instances, but only concrete string literals (e.g. "John")
+		};
+	//The slot also has a cardinality constraint specifying the valid amount of FirstName instances
+	@C: ComplexEntity.Children.C =				
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;	// Some parts are cloned only from the meta 
+			
+			//Cardinality constraint with [1..2]
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;	// Others are instantiated (customized)
+			slot Max : ComplexEntity.Children.C.Card.Max = 2;
+		};
+	// Finally, after specifying the constraints, we define the slot for the first name(s) itself
+	// The slot is an instance of the ComplexEntity.Children slot
+	slot FirstName : ComplexEntity.Children; 
+	
+	// Note: the slot can be referred as $ComplexName.FistName from now on
+	// Note: if we would like to refer to the type constraint of this slot, we can do it as: $ComplexName.FirstName.Type
+	//===========================================================================
+	
+	//===========================================================================
+	// The definition of the LastName slot and its constraints
+	
+	// It is very similar to the FirstName slot, the difference is only at the cardinality constraint
+	@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T {
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			//Type constraint with String
+			slot Type : ComplexEntity.Children.T.T.T = $String;
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};
+	@C: ComplexEntity.Children.C =
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;
+			
+			//Cardinality constraint with [1..1]
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		
+	//The definition of the slot itself
+	slot LastName : ComplexEntity.Children; 
+	//===========================================================================
+}
+
+//As next, we create the type representing Persons
+Person : ComplexEntity {
+		
+	//===========================================================================
+	// The definition of the full name slot and its constraints
+	
+	@T: ComplexEntity.Children.T =
+		Type : ComplexEntity.Children.T.T {
+			Type.IsOverwritable;
+			Type.IsPermanent;
+			
+			////The type constraint here refers to the newly created ComplexName entity (defined above)
+			slot Type : ComplexEntity.Children.T.T.T = $ComplexName;		
+			slot IsInclusive : ComplexEntity.Children.T.T.IsIncl = false;
+		};
+	@C: ComplexEntity.Children.C =
+		Card : ComplexEntity.Children.C.Card {
+			Cardinality.IsOverwritable;
+			Cardinality.IsPermanent;
+			
+			//Cardinality constraint with [1..1]
+			slot Min : ComplexEntity.Children.C.Card.Min = 1;
+			slot Max : ComplexEntity.Children.C.Card.Max = 1;
+		};
+		
+	//The slot for the FullName of Person
+	slot FullName : ComplexEntity.Children; 
+	//===========================================================================
+	
+	//===========================================================================
+	// The definition of the alpha validation formula slot and its constraints...
+	
+	@Base.AlphaValidation.OpSig		//... here we do not change any constraints applied on the formula...
+	@Base.AlphaValidation.T			
+	@Base.AlphaValidation.C		
+	//... but only the pointer to the function describing the validation logic
+	//The new function is used when validation Persons. It does not replace but extend the validation of the base's validation formulae
+	//We specify here the new formula is the new value of the slot Base.AlphaValidation, its definition can be found in $PersonAlpha
+	slot AlphaValidation : Base.AlphaValidation = $PersonAlpha;		
+	//===========================================================================
+}
+
+/*
+ * The alpha validation of Person. Checks a single meta-instance relation.
+ * It is an instance of the OperationDefinition entity. 
+ * It is important that we could define this PersonAlpha entity as a tree of entities (similarly to Person), but it would be highly complex and hard to understand.
+ * Instead, we use the operation description part of DMLAScript that is an imperative language. 
+ * From the definition, we generate the entity tree later on (in the background) automatically. 
+ * 
+ * The structure of the operation:
+ * 	- Return type: Bool - true if the meta-entity relation is valid
+ * 	- Context type: ID - the ID of the meta entity to be validated, the context type is the type of "this"/"self"
+ * 	- Parameters: ID - the ID of the instance entity (the entity to be validated)
+ */ 
+operation Bool ID::PersonAlpha(ID instance){
+	
+	//We obtain the value of the slot containing the name of the person instance by using its full path (as defined above)
+	ID fullName = call $GetRelevantAttributeValue(instance, $Person.FullName);
+	
+	// If no name is specified yet => the entity is valid
+	if(fullName==null)
+		return true; 
+		
+	//We obtain the first name values contained by the ComplexName of the fullName variable (here again, we use the navigation path)
+	Object[] firstNames = call $GetRelevantAttributeValues(fullName, $ComplexName.FirstName);
+	
+	//If the array is empty (no first name defined yet) or it has less than 2 first names => valid
+	if(firstNames==null || size(firstNames)<2)
+		return true; 
+	
+	//Otherwise, we ensure that the first names do not match
+	return index<Object>( firstNames, 0) != index<Object>( firstNames, 1);
+	
+	//Note: we do not have to check whether there is more than two first names specified, since it is automatically validated by the cardinality constraint specified in ComplexName
+}
+}
